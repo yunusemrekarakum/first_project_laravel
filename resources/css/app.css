@@ -1,3 +1,7 @@
+body {
+    background-color: #e5e5e5 !important;
+}
+
 .header-area {
     display: flex;
     align-items: center;
@@ -46,4 +50,83 @@ a {
 
 .user-account ul li svg {
     margin-right: 5px;
+}
+
+.product-view {
+    margin-top: 50px;
+}
+
+.title-area .title {
+    font-size: 45px;
+    font-weight: 600;
+}
+
+.title-area p {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.filter-btn {
+    border: transparent;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    text-align: left;
+    background-color: #fff;
+    border-radius: 50px;
+    padding: 10px 20px;
+}
+
+.filter-btn-left .mini-text {
+    font-size: 14px;
+    color: gray;
+    display: block;
+}
+
+.filter-btn-left p {
+    font-size: 18px;
+    margin: 0;
+}
+
+.filter-btn-left {
+    margin-right: 30px;
+}
+
+.filter-area {
+    margin-top: 35px;
+}
+
+.filter-area {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.filter-left-area {
+    display: flex;
+    align-items: center;
+}
+
+.filter-left-area .filter-box {
+    margin-right: 20px;
+    position: relative;
+}
+
+.filter-left-area .filter-box:last-child {
+    margin: 0;
+}
+
+.filter-content {
+    max-width: 195px;
+    position: absolute;
+    top: 75px;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 50px;
+}
+
+.filter-search-area input {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid gray;
 }

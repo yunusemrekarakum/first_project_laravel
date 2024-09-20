@@ -3,7 +3,9 @@
         <div class="container">
             <div class="header-area">
                 <div class="logo">
-                    <img :src="logoUrl" alt="Açıklama" />
+                    <a href="">
+                        <img :src="logoUrl" alt="Açıklama" />
+                    </a>
                 </div>
                 <div class="links">
                     <ul>
