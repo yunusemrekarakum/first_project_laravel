@@ -10,6 +10,7 @@
     <div id="app">
         <header-component></header-component>
         <filter-component></filter-component>
+        <product-component></product-component>
     </div>
     @vite('resources/js/app.js')
 </body>
