@@ -1,0 +1,46 @@
+<template>
+    <header>
+        <div class="container">
+            <div class="header-area">
+                <div class="logo">
+                    <img :src="logoUrl" alt="Açıklama" />
+                </div>
+                <div class="links">
+                    <ul>
+                        <li><a href="">Anasayfa</a></li>
+                    </ul>
+                </div>
+                <div class="user-account">
+                    <ul>
+                        <li>
+                            <button>
+                                cart 0
+                            </button>
+                        </li>
+                        <li>
+                            <a href=""><i class="fa-regular fa-user"></i>
+                                My account
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+</template>
+
+<script>
+    export default {
+        data() {
+            return {
+                logoUrl: '../assets/img/logo.png'
+            };
+        },
+        name: 'HeaderComponent'
+    };
+
+</script>
+
+<style scoped>
+
+</style>
