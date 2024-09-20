@@ -1,0 +1,49 @@
+.header-area {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header-area .logo img {
+    width: 150px;
+}
+
+.user-account ul {
+    display: flex;
+    align-items: center;
+}
+
+ul {
+    list-style: none;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+a {
+    text-decoration: none !important;
+}
+
+.user-account ul li:not(:last-child) {
+    margin-right: 16px;
+}
+
+.header-area .links li a {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000;
+}
+
+.basket-btn {
+    background-color: transparent;
+    border: transparent;
+    font-size: 18px;
+    font-weight: 200;
+}
+
+.user-account ul li a {
+    color: #000;
+}
+
+.user-account ul li svg {
+    margin-right: 5px;
+}

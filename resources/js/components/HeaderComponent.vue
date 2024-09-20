@@ -13,12 +13,14 @@
                 <div class="user-account">
                     <ul>
                         <li>
-                            <button>
+                            <button class="basket-btn">
+                                <font-awesome-icon :icon="['fas', 'bag-shopping']" />
                                 cart 0
                             </button>
                         </li>
                         <li>
-                            <a href=""><i class="fa-regular fa-user"></i>
+                            <a href="">
+                                <font-awesome-icon :icon="['far', 'user']" />
                                 My account
                             </a>
                         </li>
