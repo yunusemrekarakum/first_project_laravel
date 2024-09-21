@@ -7,11 +7,11 @@
                         <img :src="logoUrl" alt="Açıklama" />
                     </a>
                 </div>
-                <div class="links">
+                <!--<div class="links">
                     <ul>
                         <li><a href="">Anasayfa</a></li>
                     </ul>
-                </div>
+                </div> -->
                 <div class="user-account">
                     <ul>
                         <li>
