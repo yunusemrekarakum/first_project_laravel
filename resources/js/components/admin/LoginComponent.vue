@@ -43,14 +43,15 @@
         methods: {
             async login() {
                 try {
-                    const response = await axios.post('/panellogin', {
+                    const response = await axios.post('/admin/giris', {
                         user_name: this.formData.username,
                         password: this.formData.password
                     })
-                    console.log(response.data);
+                    window.location.href = '/admin';
+                    return;
                 } catch (error) {
+                    this.errorMessage = 'Giriş Bilgileri Geçersiz.';
                     console.error(error.response.data.message);
-                    
                 }
             }
         }

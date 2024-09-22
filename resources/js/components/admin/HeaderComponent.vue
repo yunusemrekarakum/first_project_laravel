@@ -3,16 +3,16 @@
         <div class="container-fluid">
             <div class="header-item">
                 <div class="logo">
-                    <a href="">
+                    <a href="./">
                         <img :src="logoUrl" alt="">
                     </a>
                 </div>
                 <div class="header-links">
                     <ul>
                         <li>
-                            <a href="">Ürünler</a>
+                            <a href="./">Ürünler</a>
                             <ul class="sub-menu">
-                                <li><a href="">Ekle</a></li>
+                                <li><a href="urun-ekle">Ekle</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -20,12 +20,12 @@
                 <div class="admin-account">
                     <div class="admin-account-content">
                         <div class="user-photo">
-                            <a href="">
+                            <a href="/admin/hesabim">
                                 <img :src="userphoto" alt="">
                             </a>
                         </div>
                         <div class="user-info">
-                            <a href="">
+                            <a href="/admin/hesabim">
                                 <span class="user-name">Yunus Emre Karakum</span>
                                 <div class="icon">
                                 </div>
@@ -33,8 +33,8 @@
                         </div>
                     </div>
                     <ul class="admin-account-other-link">
-                        <li><a href="">Profil</a></li>
-                        <li><a href="">Çıkış Yap</a></li>
+                        <li><a href="/admin/hesabim">Profil</a></li>
+                        <li><a href="admin/cikis">Çıkış Yap</a></li>
                     </ul>
                 </div>
             </div>
