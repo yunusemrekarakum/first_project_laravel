@@ -3,7 +3,7 @@
         <div class="container">
             <div class="header-area">
                 <div class="logo">
-                    <a href="">
+                    <a href="/">
                         <img :src="logoUrl" alt="Açıklama" />
                     </a>
                 </div>
@@ -37,7 +37,7 @@
     export default {
         data() {
             return {
-                logoUrl: '../assets/img/logo.png'
+                logoUrl: '../assets/img/logo.png',
             };
         },
         name: 'HeaderComponent'

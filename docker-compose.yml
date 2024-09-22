@@ -13,12 +13,16 @@ services:
             - '${VITE_PORT:-5000}:${VITE_PORT:-5173}'
         environment:
             WWWUSER: '${WWWUSER}'
+            WWWGROUP: ${WWWGROUP}
             LARAVEL_SAIL: 1
             XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
             XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
         volumes:
             - '.:/var/www/html'
+            - ./routes:/var/www/html/routes
+            - ./storage:/var/www/html/storage
+            - ./bootstrap/cache:/var/www/html/bootstrap/cache
         networks:
             - sail
         depends_on:

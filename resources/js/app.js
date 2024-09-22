@@ -2,7 +2,6 @@ import './bootstrap';
 import { createApp } from 'vue';
 import { library } from '@fortawesome/fontawesome-svg-core'; 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { faBagShopping } from '@fortawesome/free-solid-svg-icons';
 import { faUser as farUser } from '@fortawesome/free-regular-svg-icons'; 
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
