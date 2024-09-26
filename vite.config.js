@@ -8,8 +8,8 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
-                'resources/css/admin.css',
-                'resources/js/admin.js'
+                // 'resources/css/admin.css',
+                // 'resources/js/admin.js'
             ],
             refresh: true,
         }),
@@ -22,7 +22,7 @@ export default defineConfig({
     },
     resolve: {
         alias: {
-            'vue': 'vue/dist/vue.esm-bundler.js' // Vue alias ekleyin
+            'vue': 'vue/dist/vue.esm-bundler.js'
         },
     },
 });

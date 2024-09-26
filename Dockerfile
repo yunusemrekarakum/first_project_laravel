@@ -34,6 +34,7 @@ RUN docker-php-ext-install fileinfo
 RUN docker-php-ext-install pdo
 RUN docker-php-ext-install pdo_mysql
 RUN docker-php-ext-install tokenizer
+RUN npm install @vitejs/plugin-vue --save-dev
 
 # Composer kurulumunu yap
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer

@@ -285,3 +285,230 @@ a {
 .account-area {
     margin: 70px 0;
 }
+
+.login-top .title {
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 35px;
+}
+
+.site-btn {
+    background-color: transparent;
+    border: 1px solid #000 !important;
+    display: block;
+    padding: 6px 20px;
+    border-radius: 4px;
+    color: #000;
+}
+
+.form-input {
+    margin-bottom: 15px;
+}
+
+.login-btn-area .site-btn {
+    width: 100%;
+}
+
+.header-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header-item .logo img {
+    width: 150px;
+}
+
+.header-links ul {
+    display: flex;
+    align-items: center;
+}
+
+ul {
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+a {
+    text-decoration: none !important;
+}
+
+.header-links>ul>li>a {
+    color: #000;
+    display: block;
+    padding: 8px 10px;
+}
+
+.header-links ul li ul {
+    position: absolute;
+    top: 100%;
+    background-color: #ededed;
+    padding: 7px 10px !important;
+    border-radius: 6px;
+    width: 100px;
+    min-width: max-content;
+    display: none;
+}
+
+.header-links ul li {
+    position: relative;
+}
+
+.header-links ul li:hover .sub-menu {
+    display: block;
+}
+
+ul.sub-menu li a {
+    color: #000;
+    display: block;
+}
+
+ul.sub-menu li:not(:last-child) a {
+    margin-bottom: 5px;
+}
+
+.admin-account-content .user-photo img {
+    width: 40px;
+}
+
+.admin-account-content {
+    display: flex;
+    align-items: center;
+    padding: 15px 0;
+}
+
+
+
+.admin-account-content .user-photo {
+    margin-right: 10px;
+}
+
+.admin-account-content .user-info {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.admin-account:hover .admin-account-other-link {
+    display: block;
+}
+
+ul.admin-account-other-link {
+    display: none;
+    position: absolute;
+    top: 100%;
+}
+
+.admin-account {
+    position: relative;
+}
+
+ul.admin-account-other-link {
+    box-shadow: 0px 0px 7px -1px #939393;
+    border-radius: 5px;
+    width: 130px;
+    min-width: max-content;
+}
+
+ul.admin-account-other-link li a {
+    display: block;
+    padding: 4px 7px;
+    color: #000;
+}
+
+.admin-account-other-link li:not(:last-child) {
+    border-bottom: 1px solid #9f9f9f;
+}
+
+.admin-account-content .user-info .user-name {
+    color: #000;
+}
+
+.product-color {
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.list-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #dddddd;
+}
+
+.list-top-left .title {
+    font-size: 30px;
+}
+
+.list-search input {
+    border-radius: 3px;
+}
+
+.input-area label {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.input-area:not(:last-child) {
+    margin-bottom: 16px;
+}
+
+
+.account-box {
+    box-shadow: 0px 0px 7px -2px #919191;
+    border-radius: 7px;
+    padding: 15px;
+    background-color: #ffffff38;
+}
+
+.account-box .account-name {
+    font-size: 21px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    display: block;
+}
+
+.account-box .account-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.account-list li a {
+    font-size: 16px;
+    font-weight: 500;
+    color: #323232;
+}
+
+.account-list li:not(:last-child) {
+    margin-bottom: 4px;
+}
+
+.account-box .login-btn-area {
+    margin-top: 15px;
+}
+
+.account-area {
+    margin: 70px 0;
+}
+
+.profile-photo img {
+    width: 100%;
+}
+
+ul.admin-account-other-link li button {
+    display: block;
+    padding: 4px 7px;
+    color: #000;
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+    width: 100%;
+    text-align: left;
+}

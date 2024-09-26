@@ -1,4 +1,4 @@
-<template lang="">
+<template>
     <div class="login-area">
         <div class="container">
             <div class="row justify-content-center">
@@ -24,7 +24,9 @@
                                 </div>
                                 <div class="login-btn-area">
                                     <button type="submit" class="site-btn btn login-btn">Register</button>
-                                    <a href="" class="site-btn">Login</a>
+                                    <router-link to="/giris-yap" class="site-btn">
+                                        Login
+                                    </router-link>
                                 </div>
                             </form>
                         </div>

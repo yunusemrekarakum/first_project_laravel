@@ -3,15 +3,10 @@
         <div class="container">
             <div class="header-area">
                 <div class="logo">
-                    <a href="/">
+                    <router-link to="/">
                         <img :src="logoUrl" alt="Açıklama" />
-                    </a>
+                    </router-link>
                 </div>
-                <!--<div class="links">
-                    <ul>
-                        <li><a href="">Anasayfa</a></li>
-                    </ul>
-                </div> -->
                 <div class="user-account">
                     <ul>
                         <li>
@@ -21,10 +16,10 @@
                             </button>
                         </li>
                         <li>
-                            <a href="">
+                            <router-link to="/hesabim">
                                 <font-awesome-icon :icon="['far', 'user']" />
                                 My account
-                            </a>
+                            </router-link>
                         </li>
                     </ul>
                 </div>

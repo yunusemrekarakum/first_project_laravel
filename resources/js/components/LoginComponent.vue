@@ -20,7 +20,9 @@
                                 </div>
                                 <div class="login-btn-area">
                                     <button type="submit" class="site-btn btn login-btn">Login</button>
-                                    <a href="" class="site-btn">Create account</a>
+                                    <router-link to="/kayit-ol" class="site-btn">
+                                        Create account
+                                    </router-link>
                                 </div>
                             </form>
                         </div>
