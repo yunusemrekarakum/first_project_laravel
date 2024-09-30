@@ -22,6 +22,7 @@ services:
             - '.:/var/www/html'
             - ./routes:/var/www/html/routes
             - ./storage:/var/www/html/storage
+            - ./public:/var/www/html/public
             - ./bootstrap/cache:/var/www/html/bootstrap/cache
         networks:
             - sail

@@ -114,8 +114,19 @@ const router = createRouter({
     routes
 });
 
+
+
 router.beforeEach(async (to, from, next) => {
     const sessionData = localStorage.getItem('vue-session-key');
+    if (sessionData) {
+        const tokenExpiry = JSON.parse(localStorage.getItem('vue-session-key')).token_expiry;
+        if (tokenExpiry) {
+            const expiryDate = new Date(tokenExpiry);
+            if (new Date(new Date().getTime()) > expiryDate) {
+                localStorage.removeItem('vue-session-key');
+            }
+        }
+    }
     const isAuthenticated = sessionData ? !!JSON.parse(sessionData).token : false;
     if (to.name == 'AdminLogin') {
         if (isAuthenticated) {

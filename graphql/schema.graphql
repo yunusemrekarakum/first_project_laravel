@@ -1,0 +1,53 @@
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+scalar Upload @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Upload")
+
+type Query {
+    user(
+      id: ID @eq @rules(apply: ["prohibits:email", "required_without:email"])
+      email: String @eq @rules(apply: ["prohibits:id", "required_without:id", "email"])
+    ): User @find
+    users(
+      name: String @where(operator: "like")
+    ): [User!]! @paginate(defaultCount: 10)
+    admin: Admin @field(resolver: "App\\GraphQL\\Resolvers\\AdminResolver@getAdmin")
+}
+type User {
+    id: ID!
+    name: String!
+    email: String!
+    email_verified_at: DateTime
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+#type Query {
+#    adminLogin(user_name: String!, password: String!): Admin @field(resolver: "App\\GraphQL\\Resolvers\\AdminResolver@login")
+#}
+
+type Admin {
+    id: ID!
+    user_name: String!
+    name_surname: String!
+    profile_image: String
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+type Mutation {
+    adminLogin(user_name: String!, password: String!): AuthPayload
+    adminLogout: LogoutPayload
+    updateAdmin(
+        name_surname: String,
+        user_name: String,
+        password: String,
+        old_password: String
+        profile_image: Upload
+    ): Admin @field(resolver: "App\\GraphQL\\Resolvers\\AdminResolver@updateAdmin")
+}
+
+type AuthPayload {
+    token: String!
+    admin: Admin
+}
+type LogoutPayload {
+    success: Boolean!
+}

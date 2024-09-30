@@ -43,7 +43,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN npm install -g n && n stable
 
 # /var/www/html dizinine gerekli izinleri ver
-RUN chown -R www-data:www-data /var/www/html
+RUN chown -R sail:sail /var/www/html
 
 # Çalışma dizini olarak ayarla
 WORKDIR /var/www/html

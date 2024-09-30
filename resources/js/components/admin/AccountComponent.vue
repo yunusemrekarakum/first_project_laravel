@@ -38,14 +38,14 @@
                                 <div class="col-lg-6">
                                     <div class="form-input">
                                         <label for="">Eski Şifre</label>
-                                        <input type="text" class="form-control"
+                                        <input type="password" class="form-control"
                                                v-model="formData.old_password">
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="form-input">
                                         <label for="">Yeni Şifre</label>
-                                        <input type="text" class="form-control"
+                                        <input type="password" class="form-control"
                                                v-model="formData.password">
                                     </div>
                                 </div>
@@ -55,7 +55,7 @@
                                 <div class="col-lg-9">
                                     <div class="form-input">
                                         <input type="file" class="form-control"
-                                               @change="formData.profile_image">
+                                               @change="handleFileUpload">
                                     </div>
                                 </div>
                                 <div class="col-lg-3">
@@ -83,15 +83,18 @@ import axios from "axios";
 
 export default {
     name: "AccountComponent",
-    data() {
-        return {
-            userphoto: '../assets/img/user-photo.png',
-        };
-    },
     setup() {
         const $session = inject('$vsession');
-        const token = $session.get("token")
+        const token = $session.get("token");
         const admin_info = ref(null);
+        const profile_image = ref(null);
+        const formData = ref({
+            name_surname: null,
+            user_name: null,
+            old_password: null,
+            password: null,
+            profile_image: null
+        });
         const admin_get_info = async () => {
             const adminquery = `
                 query {
@@ -109,20 +112,20 @@ export default {
             })
             admin_info.value = response.data.data.admin;
         };
-        const handleFileUpload = (event) => {
-            const file = event.target.files[0];
-            formData.value.profile_image = file; // File nesnesini sakla
-        };
+        const handleFileUpload = (e) => {
+            profile_image.value = e.target.files[0];
+        }
         const updateAdmin = async () => {
             try {
-                mutation = `
-                    mutation {
+                const formDataToSend = new FormData();
+                const query = `
+                    mutation ($file: Upload, $name_surname: String, $user_name: String, $password: String, $old_password: String) {
                         updateAdmin(
-                            id: "${admin_info.value.id}",
-                            name_surname: ${formData.value.name_surname ? `"${formData.value.name_surname}"` : null},
-                            user_name: ${formData.value.user_name ? `"${formData.value.user_name}"` : null},
-                            password: ${formData.value.password ? `"${formData.value.password}"` : null},
-                            profile_image: ${formData.value.profile_image ? `"${formData.value.profile_image.name}"` : null}
+                            name_surname: $name_surname,
+                            user_name: $user_name,
+                            password: $password,
+                            old_password: $old_password,
+                            profile_image: $file
                         ) {
                             id
                             name_surname
@@ -131,16 +134,38 @@ export default {
                         }
                     }
                 `;
-                const formDataToSend = new FormData();
-                const response = await axios.post("/graphql", {query: mutation}, {
+                const operations = {
+                    query: query,
+                    variables: {
+                        name_surname: formData.value.name_surname,
+                        user_name: formData.value.user_name,
+                        password: formData.value.password,
+                        old_password: formData.value.old_password,
+                        file: null
+                    }
+                };
+                formDataToSend.append('operations', JSON.stringify(operations));
+                const map = {
+                    '0': ['variables.file']
+                };
+                formDataToSend.append('map', JSON.stringify(map));
+                if (profile_image.value) {
+                    formDataToSend.append('0', profile_image.value);
+                }
+                const response = await axios.post("/graphql", formDataToSend, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'multipart/form-data'
                     }
-                })
-                console.log(response)
+                });
+                if (response.data.errors && response.data.errors.length > 0) {
+                    console.log(response.data.errors[0].extensions.debugMessage)
+                } else {
+                    console.log(response.data.data)
+                    window.location.reload();
+                }
             } catch (error) {
-                console.log(error)
+                console.log(error.response.data)
             }
         };
         onMounted(() => {
@@ -148,13 +173,10 @@ export default {
         });
         return {
             admin_info,
-            formData: {
-                'name_surname': null,
-                'user_name': null,
-                'old_passwod': null,
-                'password': null,
-                'profile_image': null
-            }
+            formData,
+            userphoto: '../assets/img/user-photo.png',
+            updateAdmin,
+            handleFileUpload
         };
     }
 }

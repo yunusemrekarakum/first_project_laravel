@@ -30,7 +30,7 @@ const app = createApp(App);
 
 var options = {
     persist: true,
-    expiry: 7200,
+    expiry: 1,
 }
 app.use(Vue3Session, options)
 app.use(router)

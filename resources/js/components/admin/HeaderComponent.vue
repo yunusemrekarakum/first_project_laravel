@@ -3,14 +3,14 @@
         <div class="container-fluid">
             <div class="header-item">
                 <div class="logo">
-                    <a href="./">
+                    <router-link to="/admin">
                         <img :src="logoUrl" alt="">
-                    </a>
+                    </router-link>
                 </div>
                 <div class="header-links">
                     <ul>
                         <li>
-                            <a href="./">Ürünler</a>
+                            <router-link to="/admin">Ürünler</router-link>
                             <ul class="sub-menu">
                                 <li><a href="urun-ekle">Ekle</a></li>
                             </ul>
@@ -20,18 +20,18 @@
                 <div class="admin-account">
                     <div class="admin-account-content">
                         <div class="user-photo">
-                            <a href="/admin/hesabim">
+                            <router-link to="/admin/hesabim">
                                 <img :src="admin_info.profile_image" alt=""
                                      v-if="admin_info && admin_info.profile_image">
                                 <img :src="userphoto" alt="" v-else>
-                            </a>
+                            </router-link>
                         </div>
                         <div class="user-info">
-                            <a href="/admin/hesabim">
+                            <router-link to="/admin/hesabim">
                                 <span class="user-name" v-if="admin_info">{{ admin_info.name_surname }}</span>
                                 <div class="icon">
                                 </div>
-                            </a>
+                            </router-link>
                         </div>
                     </div>
                     <ul class="admin-account-other-link">

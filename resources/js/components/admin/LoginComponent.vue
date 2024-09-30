@@ -54,7 +54,11 @@ export default {
                 const response = await axios.post('/graphql', {query: mutation});
                 const token = response.data.data.adminLogin.token;
                 $session.set('token', token);
-                //router.push("Admin")
+                const expiryDuration = 7200000; // 7200000 ms = 2 saat
+                const expiryTime = new Date(new Date().getTime() + expiryDuration); // 2 saat sonrası
+                $session.set('token', token);
+                $session.set('token_expiry', expiryTime.toISOString());
+                router.push("Admin")
             } catch (error) {
                 console.error(error);
                 // Hata durumunda kullanıcıya bir mesaj göstermek için bir yöntem ekleyebilirsiniz
