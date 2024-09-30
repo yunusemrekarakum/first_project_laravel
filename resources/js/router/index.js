@@ -1,7 +1,6 @@
 import {createRouter, createWebHistory} from 'vue-router';
 import LoginAdmin from "../components/admin/LoginComponent.vue";
 
-
 const HomePage = {
     template: `
         <div>
@@ -60,8 +59,30 @@ const AdminAccount = {
         </div>
     `,
 }
-
-
+const CategoryAdd = {
+    template: `
+        <div>
+            <header-admin></header-admin>
+            <category-add></category-add>
+        </div>
+    `,
+}
+const CategoryList = {
+    template: `
+        <div>
+            <header-admin></header-admin>
+            <category-list></category-list>
+        </div>
+    `,
+}
+const CategoryEdit = {
+    template: `
+        <div>
+            <header-admin></header-admin>
+            <category-edit></category-edit>
+        </div>
+    `,
+}
 const routes = [
     {
         path: '/',
@@ -106,6 +127,24 @@ const routes = [
         path: '/admin/hesabim',
         name: 'AdminAccount',
         component: AdminAccount,
+        meta: {requiresAuth: true}
+    },
+    {
+        path: '/admin/kategori-listele',
+        name: 'CategoryList',
+        component: CategoryList,
+        meta: {requiresAuth: true}
+    },
+    {
+        path: '/admin/kategori-ekle',
+        name: 'CategoryAdd',
+        component: CategoryAdd,
+        meta: {requiresAuth: true}
+    },
+    {
+        path: '/admin/kategori-duzenle/:id',
+        name: 'CategoryEdit',
+        component: CategoryEdit,
         meta: {requiresAuth: true}
     }
 ]

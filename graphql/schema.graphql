@@ -3,13 +3,15 @@ scalar Upload @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Upload
 
 type Query {
     user(
-      id: ID @eq @rules(apply: ["prohibits:email", "required_without:email"])
-      email: String @eq @rules(apply: ["prohibits:id", "required_without:id", "email"])
+        id: ID @eq @rules(apply: ["prohibits:email", "required_without:email"])
+        email: String @eq @rules(apply: ["prohibits:id", "required_without:id", "email"])
     ): User @find
     users(
-      name: String @where(operator: "like")
+        name: String @where(operator: "like")
     ): [User!]! @paginate(defaultCount: 10)
     admin: Admin @field(resolver: "App\\GraphQL\\Resolvers\\AdminResolver@getAdmin")
+    categories: [Category!]!
+    category(id: ID!):Category
 }
 type User {
     id: ID!
@@ -20,10 +22,6 @@ type User {
     updated_at: DateTime!
 }
 
-#type Query {
-#    adminLogin(user_name: String!, password: String!): Admin @field(resolver: "App\\GraphQL\\Resolvers\\AdminResolver@login")
-#}
-
 type Admin {
     id: ID!
     user_name: String!
@@ -32,6 +30,7 @@ type Admin {
     created_at: DateTime!
     updated_at: DateTime!
 }
+
 type Mutation {
     adminLogin(user_name: String!, password: String!): AuthPayload
     adminLogout: LogoutPayload
@@ -42,6 +41,10 @@ type Mutation {
         old_password: String
         profile_image: Upload
     ): Admin @field(resolver: "App\\GraphQL\\Resolvers\\AdminResolver@updateAdmin")
+    AddCategories (title: String!): Category @field(resolver: "App\\GraphQL\\Mutations\\Category@add_category")
+    DeleteCategories(id: ID!): String @field(resolver: "App\\GraphQL\\Mutations\\Category@delete_category")
+    EditCategories(id: ID!, title: String!): Category @field(resolver: "App\\GraphQL\\Mutations\\Category@edit_category")
+    EditListCategory(id: ID!): Category @field (resolver: "App\\GraphQL\\Mutations\\Category@edit_list_category")
 }
 
 type AuthPayload {
@@ -50,4 +53,10 @@ type AuthPayload {
 }
 type LogoutPayload {
     success: Boolean!
+}
+type Category {
+    id: ID!
+    title: String!
+    created_at: String
+    updated_at: String
 }

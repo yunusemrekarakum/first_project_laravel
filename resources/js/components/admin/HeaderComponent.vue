@@ -15,6 +15,12 @@
                                 <li><a href="urun-ekle">Ekle</a></li>
                             </ul>
                         </li>
+                        <li>
+                            <router-link to="/admin/kategori-listele">Kategoriler</router-link>
+                            <ul class="sub-menu">
+                                <li><router-link to="/admin/kategori-ekle">Ekle</router-link></li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
                 <div class="admin-account">
@@ -58,8 +64,8 @@ import axios from "axios";
 export default {
     data() {
         return {
-            logoUrl: '../assets/img/logo.png',
-            userphoto: '../assets/img/user-photo.png',
+            logoUrl: 'http://localhost/assets/img/logo.png',
+            userphoto: 'http://localhost/assets/img/user-photo.png',
         };
     },
     name: "HeaderComponent",
