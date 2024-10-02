@@ -51,6 +51,14 @@ const ProductAdd = {
         </div>
     `,
 }
+const ProductEdit = {
+    template: `
+        <div>
+            <header-admin></header-admin>
+            <edit-admin></edit-admin>
+        </div>
+    `,
+}
 const AdminAccount = {
     template: `
         <div>
@@ -121,6 +129,12 @@ const routes = [
         path: '/admin/urun-ekle',
         name: 'ProductAdd',
         component: ProductAdd,
+        meta: {requiresAuth: true}
+    },
+    {
+        path: '/admin/urun-duzenle/:id',
+        name: 'ProductEdit',
+        component: ProductEdit,
         meta: {requiresAuth: true}
     },
     {

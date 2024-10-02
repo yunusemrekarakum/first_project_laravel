@@ -12,6 +12,8 @@ type Query {
     admin: Admin @field(resolver: "App\\GraphQL\\Resolvers\\AdminResolver@getAdmin")
     categories: [Category!]!
     category(id: ID!):Category
+    products: [Product!]! @field(resolver: "App\\GraphQL\\Mutations\\Product@list_product")
+    EditListProduct(id: ID!): Product @field (resolver: "App\\GraphQL\\Mutations\\Product@product_list_edit")
 }
 type User {
     id: ID!
@@ -45,6 +47,24 @@ type Mutation {
     DeleteCategories(id: ID!): String @field(resolver: "App\\GraphQL\\Mutations\\Category@delete_category")
     EditCategories(id: ID!, title: String!): Category @field(resolver: "App\\GraphQL\\Mutations\\Category@edit_category")
     EditListCategory(id: ID!): Category @field (resolver: "App\\GraphQL\\Mutations\\Category@edit_list_category")
+    AddProduct(
+        title: String!,
+        category_id: ID!,
+        image_path: Upload,
+        price: String!,
+        features: String!,
+        colors: String!
+    ): Product @field (resolver: "App\\GraphQL\\Mutations\\Product@product_add")
+    DeleteProduct(id: ID!): String @field (resolver: "App\\GraphQL\\Mutations\\Product@product_delete")
+    EditProduct(
+        id: ID!,
+        title: String,
+        category_id: ID,
+        image_path: Upload,
+        price: String,
+        features: String,
+        colors: String
+    ): Product @field (resolver: "App\\GraphQL\\Mutations\\Product@product_edit")
 }
 
 type AuthPayload {
@@ -59,4 +79,18 @@ type Category {
     title: String!
     created_at: String
     updated_at: String
+    products: [Product!]!
+}
+type Product {
+    id: ID!
+    title: String!
+    category_id: ID!
+    image_path: Upload!
+    image_path: String
+    price: String!
+    features: String!
+    colors: String!
+    created_at: String
+    updated_at: String
+    category: Category!
 }

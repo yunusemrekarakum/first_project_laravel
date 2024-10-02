@@ -22,12 +22,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <th scope="row">Shibuya Totepack</th>
-                        <td>Çanta</td>
-                        <td><span class="product-color" style="background-color: red;"></span></td>
-                        <td><a href="" class="btn btn-success">Düzenle</a></td>
-                        <td><button type="button" class="btn btn-danger">Sil</button></td>
+                    <tr v-for="value in Product_list">
+                        <th scope="row">{{ value.title }}</th>
+                        <td>{{ value.category.title }}</td>
+                        <td><span class="product-color" :style="{ backgroundColor: value.colors }"></span></td>
+                        <td><router-link :to="`/admin/urun-duzenle/${value.id}`" class="btn btn-success">Düzenle</router-link></td>
+                        <td><button type="button" class="btn btn-danger" @click="product_delete(value.id)">Sil</button></td>
                     </tr>
                 </tbody>
             </table>
@@ -35,8 +35,52 @@
     </div>
 </template>
 <script>
+    import axios from "axios";
+
     export default {
-        name: "ListComponent"
+        name: "ListComponent",
+        data() {
+            return {
+                Product_list: [],
+            }
+        },
+        methods: {
+            async products_get() {
+                const response_data = await axios.post("/graphql", {
+                    query: `
+                        query {
+                            products {
+                                id
+                                title
+                                colors
+                                category {
+                                    title
+                                }
+                            }
+                        }
+                    `
+                })
+                this.Product_list = response_data.data.data.products
+            },
+            async product_delete(id) {
+                try {
+                    const response = await axios.post("graphql", {
+                        query: `
+                            mutation {
+                                DeleteProduct(id: ${id})
+                            }
+                        `
+                    });
+                    this.Product_list = this.Product_list.filter(product => product.id !== id);
+                } catch (error) {
+                    console.log(error)
+                }
+
+            }
+        },
+        mounted() {
+            this.products_get();
+        }
     }
 
 </script>

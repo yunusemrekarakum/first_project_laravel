@@ -512,3 +512,7 @@ ul.admin-account-other-link li button {
     width: 100%;
     text-align: left;
 }
+
+.img-area img {
+    width: 100%;
+}

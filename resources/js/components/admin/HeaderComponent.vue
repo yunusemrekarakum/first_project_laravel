@@ -12,7 +12,7 @@
                         <li>
                             <router-link to="/admin">Ürünler</router-link>
                             <ul class="sub-menu">
-                                <li><a href="urun-ekle">Ekle</a></li>
+                                <li><router-link to="/admin/urun-ekle">Ekle</router-link></li>
                             </ul>
                         </li>
                         <li>
