@@ -14,7 +14,21 @@ type Query {
     category(id: ID!):Category
     products: [Product!]! @field(resolver: "App\\GraphQL\\Mutations\\Product@list_product")
     EditListProduct(id: ID!): Product @field (resolver: "App\\GraphQL\\Mutations\\Product@product_list_edit")
+    productPage(page: Int!, perPage: Int!): ProductPagination! @field(resolver: "App\\GraphQL\\Queries\\ProductQuery@products")
+    searchProducts(category: String, color: String, priceRnge: [Float]): [Product] @field(resolver: "App\\GraphQL\\Resolvers\\Meilisearch@searchProducts")
 }
+type ProductPagination {
+    data: [Product!]!
+    paginatorInfo: PaginatorInfo!
+}
+type PaginatorInfo {
+    hasMorePages: Boolean!
+    currentPage: Int!
+    lastPage: Int!
+    total: Int!
+}
+
+
 type User {
     id: ID!
     name: String!

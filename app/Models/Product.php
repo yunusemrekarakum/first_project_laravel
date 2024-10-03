@@ -11,7 +11,6 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class Product extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia, Searchable;
-    use HasFactory, InteractsWithMedia;
     protected $table = 'products';
     protected $guarded = [];
     public function category()
@@ -24,6 +23,7 @@ class Product extends Model implements HasMedia
     }
     public function toSearchableArray()
     {
+        $category = $this->category;
         return [
             'id' => (int) $this->id,
             'title' => $this->title,
@@ -31,6 +31,7 @@ class Product extends Model implements HasMedia
             'price' => $this->price,
             'features' => $this->features,
             'colors' => $this->colors,
+            'category' => $category,
         ];
     }
 }

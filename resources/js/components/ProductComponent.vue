@@ -115,7 +115,7 @@
                         </div>
                         <div class="product-info">
                             <h2 class="product-name">{{ value.title }}</h2>
-                            <p>{{ value.features }}</p>
+                            <p>{{ value.category.title }}</p>
                             <span class="price">{{ value.price }} ₺</span>
                         </div>
                     </div>
@@ -123,6 +123,25 @@
             </div>
         </div>
     </div>
+    <nav aria-label="Page navigation example" class="mt-5 mb-5">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                <button @click="fetchProducts(currentPage - 1)" :disabled="currentPage === 1" class="page-link">Önceki</button>
+            </li>
+            <li class="page-item">
+                <button @click="fetchProducts(currentPage+1)" class="page-link">{{ currentPage+1 }}</button>
+            </li>
+            <li class="page-item">
+                <button @click="fetchProducts(currentPage+2)" class="page-link">{{ currentPage+2 }}</button>
+            </li>
+            <li class="page-item">
+                <button @click="fetchProducts(currentPage+3)" class="page-link">{{ currentPage+3 }}</button>
+            </li>
+            <li class="page-item" :class="{ disabled: !hasMorePages }">
+                <button @click="fetchProducts(currentPage + 1)" :disabled="!hasMorePages" class="page-link">Sonraki</button>
+            </li>
+        </ul>
+    </nav>
 </template>
 <script>
 import axios from "axios";
@@ -132,6 +151,9 @@ export default {
         return {
             productimg: '../assets/img/product.jpg',
             products: [],
+            currentPage: 1,
+            perPage: 20,
+            hasMorePages: false,
             query: '',
             visibleFilters: {
                 filter1: false,
@@ -139,32 +161,58 @@ export default {
                 filter3: false,
                 filter4: false,
                 filter5: false
-            }
+            },
+            filters: {
+                category: '',
+                colors: '',
+                priceRange: [0, 1000],
+            },
         };
     },
     watch: {
         query: 'search'
     },
     methods: {
-        async get_product() {
-            const response = await axios.post('graphql', {
-                query: `
-                        query {
-                            products {
-                                id
+        async fetchProducts(page) {
+            const query = `
+                query($page:Int!, $perPage: Int!) {
+                    productPage(page: $page, perPage: $perPage) {
+                        data {
+                            id
+                            title
+                            image_path
+                            price
+                            features
+                            colors
+                            category {
                                 title
-                                image_path
-                                price
-                                features
-                                colors
-                                category {
-                                    title
-                                }
                             }
                         }
-                    `
-            })
-            this.products = response.data.data.products
+                        paginatorInfo {
+                            currentPage
+                            lastPage
+                            hasMorePages
+                            total
+                        }
+                    }
+                }
+            `;
+            try {
+                const response = await axios.post('/graphql', {
+                    query,
+                    variables: {
+                        page,
+                        perPage: this.perPage,
+                    },
+                })
+                const data = response.data.data.productPage;
+                this.products = data.data;
+                this.currentPage = data.paginatorInfo.currentPage;
+                this.hasMorePages = data.paginatorInfo.hasMorePages;
+                window.scrollTo({top: 0, behavior: 'auto'})
+            } catch (error) {
+                console.error("Arama sırasında bir hata oluştu:", error);
+            }
         },
         filterbtn(filter) {
             for (const key in this.visibleFilters) {
@@ -181,18 +229,33 @@ export default {
             }
         },
         async search() {
-            if (this.query.length > 0) {
-                const response = await axios.get("http://localhost:7700/indexes/products_index/search", {
-                    params: {
-                        q: this.query
+            try {
+                const query = `
+                    query($category: String, $color: String, $priceRange: [Float]) {
+                        searchProducts(category: $category, color: $color, priceRange: $priceRange) {
+                            id
+                            name
+                            category
+                            color
+                            price
+                        }
                     }
-                })
-                this.products = response.data.hits
+                `
+                const response = await axios.get('/graphql', {
+                    query,
+                    variables: {
+                        category: this.filters.category,
+                        color: this.filters.color,
+                        priceRange: this.filters.priceRange,
+                    },
+                });
+            } catch (error) {
+                console.error(error)
             }
         }
     },
     mounted() {
-        this.get_product();
+        this.fetchProducts(this.currentPage);
     },
     name: 'ProductComponent'
 
