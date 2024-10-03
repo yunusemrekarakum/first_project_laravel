@@ -1,3 +1,4 @@
+
 <template>
     <div class="product-view">
         <div class="container">
@@ -124,30 +125,30 @@
     </div>
 </template>
 <script>
-    import axios from "axios";
+import axios from "axios";
 
-    export default {
-        data() {
-            return {
-                productimg: '../assets/img/product.jpg',
-                products: [],
-                query: '',
-                visibleFilters: {
-                    filter1: false,
-                    filter2: false,
-                    filter3: false,
-                    filter4: false,
-                    filter5: false
-                }
-            };
-        },
-        watch: {
-            query: 'search'
-        },
-        methods: {
-            async get_product() {
-                const response = await axios.post('graphql', {
-                    query: `
+export default {
+    data() {
+        return {
+            productimg: '../assets/img/product.jpg',
+            products: [],
+            query: '',
+            visibleFilters: {
+                filter1: false,
+                filter2: false,
+                filter3: false,
+                filter4: false,
+                filter5: false
+            }
+        };
+    },
+    watch: {
+        query: 'search'
+    },
+    methods: {
+        async get_product() {
+            const response = await axios.post('graphql', {
+                query: `
                         query {
                             products {
                                 id
@@ -162,40 +163,40 @@
                             }
                         }
                     `
-                })
-                this.products = response.data.data.products
-            },
-            filterbtn(filter) {
-                for (const key in this.visibleFilters) {
-                    if (key == filter) {
-                        if (this.visibleFilters[filter] != true) {
-                            this.visibleFilters[filter] = true
-                        } else {
-                            this.visibleFilters[filter] = false
-                        }
-                    }
-                    if (key != filter) {
-                        this.visibleFilters[key] = false
+            })
+            this.products = response.data.data.products
+        },
+        filterbtn(filter) {
+            for (const key in this.visibleFilters) {
+                if (key == filter) {
+                    if (this.visibleFilters[filter] != true) {
+                        this.visibleFilters[filter] = true
+                    } else {
+                        this.visibleFilters[filter] = false
                     }
                 }
-            },
-            async search() {
-                if (this.query.length > 0) {
-                    const response = await axios.get("http://localhost:7700/indexes/products_index/search", {
-                        params: {
-                            q: this.query
-                        }
-                    })
-                    this.products = response.data.hits
+                if (key != filter) {
+                    this.visibleFilters[key] = false
                 }
             }
         },
-        mounted() {
-            this.get_product();
-        },
-        name: 'ProductComponent'
+        async search() {
+            if (this.query.length > 0) {
+                const response = await axios.get("http://localhost:7700/indexes/products_index/search", {
+                    params: {
+                        q: this.query
+                    }
+                })
+                this.products = response.data.hits
+            }
+        }
+    },
+    mounted() {
+        this.get_product();
+    },
+    name: 'ProductComponent'
 
-    }
+}
 
 </script>
 <style lang="">
