@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Meilisearch\Client;
 
 class Product extends Model implements HasMedia
 {
@@ -31,7 +32,7 @@ class Product extends Model implements HasMedia
             'price' => $this->price,
             'features' => $this->features,
             'colors' => $this->colors,
-            'category' => $category,
+            'category' => $category->title,
         ];
     }
 }

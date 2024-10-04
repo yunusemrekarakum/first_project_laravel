@@ -1,21 +1,31 @@
-scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
-scalar Upload @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Upload")
+scalar DateTime
+    @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+scalar Upload
+    @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\Upload")
 
 type Query {
     user(
         id: ID @eq @rules(apply: ["prohibits:email", "required_without:email"])
-        email: String @eq @rules(apply: ["prohibits:id", "required_without:id", "email"])
+        email: String
+            @eq
+            @rules(apply: ["prohibits:id", "required_without:id", "email"])
     ): User @find
-    users(
-        name: String @where(operator: "like")
-    ): [User!]! @paginate(defaultCount: 10)
-    admin: Admin @field(resolver: "App\\GraphQL\\Resolvers\\AdminResolver@getAdmin")
+    users(name: String @where(operator: "like")): [User!]!
+        @paginate(defaultCount: 10)
+    admin: Admin
+        @field(resolver: "App\\GraphQL\\Resolvers\\AdminResolver@getAdmin")
     categories: [Category!]!
-    category(id: ID!):Category
-    products: [Product!]! @field(resolver: "App\\GraphQL\\Mutations\\Product@list_product")
-    EditListProduct(id: ID!): Product @field (resolver: "App\\GraphQL\\Mutations\\Product@product_list_edit")
-    productPage(page: Int!, perPage: Int!): ProductPagination! @field(resolver: "App\\GraphQL\\Queries\\ProductQuery@products")
-    searchProducts(category: String, color: String, priceRnge: [Float]): [Product] @field(resolver: "App\\GraphQL\\Resolvers\\Meilisearch@searchProducts")
+    category(id: ID!): Category
+    products: [Product!]!
+        @field(resolver: "App\\GraphQL\\Mutations\\Product@list_product")
+    EditListProduct(id: ID!): Product
+        @field(resolver: "App\\GraphQL\\Mutations\\Product@product_list_edit")
+    productPage(page: Int!, perPage: Int!): ProductPagination!
+        @field(resolver: "App\\GraphQL\\Queries\\ProductQuery@products")
+    SearchProducts(filter: String): [Product]
+        @field(
+            resolver: "App\\GraphQL\\Resolvers\\SearchProducts@SearchProducts"
+        )
 }
 type ProductPagination {
     data: [Product!]!
@@ -27,7 +37,6 @@ type PaginatorInfo {
     lastPage: Int!
     total: Int!
 }
-
 
 type User {
     id: ID!
@@ -51,34 +60,40 @@ type Mutation {
     adminLogin(user_name: String!, password: String!): AuthPayload
     adminLogout: LogoutPayload
     updateAdmin(
-        name_surname: String,
-        user_name: String,
-        password: String,
+        name_surname: String
+        user_name: String
+        password: String
         old_password: String
         profile_image: Upload
-    ): Admin @field(resolver: "App\\GraphQL\\Resolvers\\AdminResolver@updateAdmin")
-    AddCategories (title: String!): Category @field(resolver: "App\\GraphQL\\Mutations\\Category@add_category")
-    DeleteCategories(id: ID!): String @field(resolver: "App\\GraphQL\\Mutations\\Category@delete_category")
-    EditCategories(id: ID!, title: String!): Category @field(resolver: "App\\GraphQL\\Mutations\\Category@edit_category")
-    EditListCategory(id: ID!): Category @field (resolver: "App\\GraphQL\\Mutations\\Category@edit_list_category")
+    ): Admin
+        @field(resolver: "App\\GraphQL\\Resolvers\\AdminResolver@updateAdmin")
+    AddCategories(title: String!): Category
+        @field(resolver: "App\\GraphQL\\Mutations\\Category@add_category")
+    DeleteCategories(id: ID!): String
+        @field(resolver: "App\\GraphQL\\Mutations\\Category@delete_category")
+    EditCategories(id: ID!, title: String!): Category
+        @field(resolver: "App\\GraphQL\\Mutations\\Category@edit_category")
+    EditListCategory(id: ID!): Category
+        @field(resolver: "App\\GraphQL\\Mutations\\Category@edit_list_category")
     AddProduct(
-        title: String!,
-        category_id: ID!,
-        image_path: Upload,
-        price: String!,
-        features: String!,
+        title: String!
+        category_id: ID!
+        image_path: Upload
+        price: String!
+        features: String!
         colors: String!
-    ): Product @field (resolver: "App\\GraphQL\\Mutations\\Product@product_add")
-    DeleteProduct(id: ID!): String @field (resolver: "App\\GraphQL\\Mutations\\Product@product_delete")
+    ): Product @field(resolver: "App\\GraphQL\\Mutations\\Product@product_add")
+    DeleteProduct(id: ID!): String
+        @field(resolver: "App\\GraphQL\\Mutations\\Product@product_delete")
     EditProduct(
-        id: ID!,
-        title: String,
-        category_id: ID,
-        image_path: Upload,
-        price: String,
-        features: String,
+        id: ID!
+        title: String
+        category_id: ID
+        image_path: Upload
+        price: String
+        features: String
         colors: String
-    ): Product @field (resolver: "App\\GraphQL\\Mutations\\Product@product_edit")
+    ): Product @field(resolver: "App\\GraphQL\\Mutations\\Product@product_edit")
 }
 
 type AuthPayload {
@@ -96,7 +111,7 @@ type Category {
     products: [Product!]!
 }
 type Product {
-    id: ID!
+    id: ID
     title: String!
     category_id: ID!
     image_path: Upload!

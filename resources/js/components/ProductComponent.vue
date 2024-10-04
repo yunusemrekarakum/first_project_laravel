@@ -28,7 +28,8 @@
                         </button>
                         <div class="filter-content" v-if="visibleFilters.filter1">
                             <div class="filter-search-area">
-                                <input v-model="query">
+                                <input v-model="filterData.category" 
+                                @input="meilisearchfilter('category', filterData.category)">
                             </div>
                         </div>
                     </div>
@@ -44,7 +45,9 @@
                         </button>
                         <div class="filter-content" v-if="visibleFilters.filter2">
                             <div class="filter-search-area">
-                                <input type="search">
+                                <input v-model="filterData.color"
+                                @input="meilisearchfilter('color', filterData.color)"
+                                >
                             </div>
                         </div>
                     </div>
@@ -60,7 +63,9 @@
                         </button>
                         <div class="filter-content" v-if="visibleFilters.filter3">
                             <div class="filter-search-area">
-                                <input type="search">
+                                <input v-model="filterData.features"
+                                @input="meilisearchfilter('features', filterData.features)"
+                                >
                             </div>
                         </div>
                     </div>
@@ -76,7 +81,9 @@
                         </button>
                         <div class="filter-content" v-if="visibleFilters.filter4">
                             <div class="filter-search-area">
-                                <input type="search">
+                                <input v-model="filterData.price"
+                                @input="meilisearchfilter('price', filterData.price)"
+                                >
                             </div>
                         </div>
                     </div>
@@ -162,15 +169,13 @@ export default {
                 filter4: false,
                 filter5: false
             },
-            filters: {
-                category: '',
-                colors: '',
-                priceRange: [0, 1000],
+            filterData: {
+                category: null,
+                color: null,
+                features: null,
+                price: null,
             },
         };
-    },
-    watch: {
-        query: 'search'
     },
     methods: {
         async fetchProducts(page) {
@@ -228,30 +233,42 @@ export default {
                 }
             }
         },
-        async search() {
-            try {
-                const query = `
-                    query($category: String, $color: String, $priceRange: [Float]) {
-                        searchProducts(category: $category, color: $color, priceRange: $priceRange) {
-                            id
-                            name
-                            category
-                            color
-                            price
-                        }
-                    }
-                `
-                const response = await axios.get('/graphql', {
-                    query,
-                    variables: {
-                        category: this.filters.category,
-                        color: this.filters.color,
-                        priceRange: this.filters.priceRange,
-                    },
-                });
-            } catch (error) {
-                console.error(error)
+        async meilisearchfilter(type, value) {
+            this.filterData[type] = value;
+
+            // Filter parametresini oluştur
+            const filterConditions = [];
+            if (this.filterData.category) {
+                filterConditions.push(`category = "${this.filterData.category}"`);
             }
+            if (this.filterData.color) {
+                filterConditions.push(`color = "${this.filterData.color}"`);
+            }
+            if (this.filterData.features) {
+                filterConditions.push(`features = "${this.filterData.features}"`);
+            }
+            if (this.filterData.price) {
+                filterConditions.push(`price <= ${this.filterData.price}`);
+            }
+            
+            
+            const filters = filterConditions.join(' AND ');
+            
+            try {
+                // Meilisearch API'sine istek gönder
+                const response = await axios.get('http://localhost:7700/indexes/products_index/search', {
+                    params: {
+                        filter: filters
+                    }
+                });
+                console.log(response);
+                
+                this.products = response.data.hits;
+                
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            }
+            
         }
     },
     mounted() {
