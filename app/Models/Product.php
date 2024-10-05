@@ -7,21 +7,23 @@ use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Meilisearch\Client;
 
 class Product extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia, Searchable;
     protected $table = 'products';
     protected $guarded = [];
+
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
+
     public function searchableAs() :string
     {
         return 'products_index';
     }
+    
     public function toSearchableArray()
     {
         $category = $this->category;
@@ -29,9 +31,10 @@ class Product extends Model implements HasMedia
             'id' => (int) $this->id,
             'title' => $this->title,
             'image_path' => $this->image_path,
-            'price' => $this->price,
+            'price' => (int) $this->price,
             'features' => $this->features,
             'colors' => $this->colors,
+            'created_at' => $this->created_at, //sonradan ekledim ve bunu indexe aktarmak istiyorum
             'category' => $category->title,
         ];
     }

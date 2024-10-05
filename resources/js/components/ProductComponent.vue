@@ -1,4 +1,3 @@
-
 <template>
     <div class="product-view">
         <div class="container">
@@ -28,8 +27,8 @@
                         </button>
                         <div class="filter-content" v-if="visibleFilters.filter1">
                             <div class="filter-search-area">
-                                <input v-model="filterData.category" 
-                                @input="meilisearchfilter('category', filterData.category)">
+                                <input v-model="filterData.category"
+                                    @input="meilisearchfilter(filterData.category)">
                             </div>
                         </div>
                     </div>
@@ -45,9 +44,7 @@
                         </button>
                         <div class="filter-content" v-if="visibleFilters.filter2">
                             <div class="filter-search-area">
-                                <input v-model="filterData.color"
-                                @input="meilisearchfilter('color', filterData.color)"
-                                >
+                                <input v-model="filterData.color" @input="meilisearchfilter(filterData.color)">
                             </div>
                         </div>
                     </div>
@@ -64,8 +61,7 @@
                         <div class="filter-content" v-if="visibleFilters.filter3">
                             <div class="filter-search-area">
                                 <input v-model="filterData.features"
-                                @input="meilisearchfilter('features', filterData.features)"
-                                >
+                                    @input="meilisearchfilter(filterData.features)">
                             </div>
                         </div>
                     </div>
@@ -81,9 +77,12 @@
                         </button>
                         <div class="filter-content" v-if="visibleFilters.filter4">
                             <div class="filter-search-area">
-                                <input v-model="filterData.price"
-                                @input="meilisearchfilter('price', filterData.price)"
-                                >
+                                <div class="d-flex align-items-center">
+                                    <input v-model="filterData.min_price" placeholder="Min"
+                                        @input="meilisearchfilter(filterData.min_price)">
+                                    <input v-model="filterData.max_price" placeholder="Max"
+                                        @input="meilisearchfilter(filterData.max_price)">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -101,7 +100,10 @@
                         </button>
                         <div class="filter-content" v-if="visibleFilters.filter5">
                             <div class="filter-search-area">
-                                <input type="search">
+                                <ul class="w-100">
+                                    <li><button @click="meilisearchfilter('desc')" class="btn p-0 w-100">New</button></li>
+                                    <li><button @click="meilisearchfilter('asc')" class="btn p-0 w-100">Old</button></li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -112,7 +114,7 @@
     <div class="product-area">
         <div class="container">
             <div class="row g-4">
-                <div class="col-md-3" v-for="value in products">
+                <div class="col-md-3" v-for="value in products" v-bind:key="value.id">
                     <div class="product-item">
                         <div class="product-img">
                             <img :src="value.image_path" alt="">
@@ -133,7 +135,8 @@
     <nav aria-label="Page navigation example" class="mt-5 mb-5">
         <ul class="pagination justify-content-center">
             <li class="page-item" :class="{ disabled: currentPage === 1 }">
-                <button @click="fetchProducts(currentPage - 1)" :disabled="currentPage === 1" class="page-link">Önceki</button>
+                <button @click="fetchProducts(currentPage - 1)" :disabled="currentPage === 1"
+                    class="page-link">Önceki</button>
             </li>
             <li class="page-item">
                 <button @click="fetchProducts(currentPage+1)" class="page-link">{{ currentPage+1 }}</button>
@@ -145,41 +148,44 @@
                 <button @click="fetchProducts(currentPage+3)" class="page-link">{{ currentPage+3 }}</button>
             </li>
             <li class="page-item" :class="{ disabled: !hasMorePages }">
-                <button @click="fetchProducts(currentPage + 1)" :disabled="!hasMorePages" class="page-link">Sonraki</button>
+                <button @click="fetchProducts(currentPage + 1)" :disabled="!hasMorePages"
+                    class="page-link">Sonraki</button>
             </li>
         </ul>
     </nav>
 </template>
 <script>
-import axios from "axios";
+    import axios from "axios";
 
-export default {
-    data() {
-        return {
-            productimg: '../assets/img/product.jpg',
-            products: [],
-            currentPage: 1,
-            perPage: 20,
-            hasMorePages: false,
-            query: '',
-            visibleFilters: {
-                filter1: false,
-                filter2: false,
-                filter3: false,
-                filter4: false,
-                filter5: false
-            },
-            filterData: {
-                category: null,
-                color: null,
-                features: null,
-                price: null,
-            },
-        };
-    },
-    methods: {
-        async fetchProducts(page) {
-            const query = `
+    export default {
+        data() {
+            return {
+                productimg: '../assets/img/product.jpg',
+                products: [],
+                currentPage: 1,
+                perPage: 20,
+                hasMorePages: false,
+                query: '',
+                visibleFilters: {
+                    filter1: false,
+                    filter2: false,
+                    filter3: false,
+                    filter4: false,
+                    filter5: false
+                },
+                filterData: {
+                    category: null,
+                    color: null,
+                    features: null,
+                    min_price: null,
+                    max_price: null,
+                    sort: null
+                },
+            };
+        },
+        methods: {
+            async fetchProducts(page) {
+                const query = `
                 query($page:Int!, $perPage: Int!) {
                     productPage(page: $page, perPage: $perPage) {
                         data {
@@ -202,81 +208,82 @@ export default {
                     }
                 }
             `;
-            try {
-                const response = await axios.post('/graphql', {
-                    query,
-                    variables: {
-                        page,
-                        perPage: this.perPage,
-                    },
-                })
-                const data = response.data.data.productPage;
-                this.products = data.data;
-                this.currentPage = data.paginatorInfo.currentPage;
-                this.hasMorePages = data.paginatorInfo.hasMorePages;
-                window.scrollTo({top: 0, behavior: 'auto'})
-            } catch (error) {
-                console.error("Arama sırasında bir hata oluştu:", error);
-            }
-        },
-        filterbtn(filter) {
-            for (const key in this.visibleFilters) {
-                if (key == filter) {
-                    if (this.visibleFilters[filter] != true) {
-                        this.visibleFilters[filter] = true
-                    } else {
-                        this.visibleFilters[filter] = false
+                try {
+                    const response = await axios.post('/graphql', {
+                        query,
+                        variables: {
+                            page,
+                            perPage: this.perPage,
+                        },
+                    })
+                    const data = response.data.data.productPage;
+                    this.products = data.data;
+                    this.currentPage = data.paginatorInfo.currentPage;
+                    this.hasMorePages = data.paginatorInfo.hasMorePages;
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'auto'
+                    })
+                } catch (error) {
+                    console.error("Arama sırasında bir hata oluştu:", error);
+                }
+            },
+            filterbtn(filter) {
+                for (const key in this.visibleFilters) {
+                    if (key == filter) {
+                        if (this.visibleFilters[filter] != true) {
+                            this.visibleFilters[filter] = true
+                        } else {
+                            this.visibleFilters[filter] = false
+                        }
+                    }
+                    if (key != filter) {
+                        this.visibleFilters[key] = false
                     }
                 }
-                if (key != filter) {
-                    this.visibleFilters[key] = false
+            },
+            async meilisearchfilter(value) {
+                if(value == 'desc' || value == 'asc') {
+                    this.filterData.sort = value;
                 }
+                
+                if (value.length > 1) {
+                    const query = `
+                    query {
+                        SearchProducts(
+                            category: "${this.filterData.category}",
+                            color: "${this.filterData.color}",
+                            features: "${this.filterData.features}",
+                            min_price: ${this.filterData.min_price},
+                            max_price: ${this.filterData.max_price},
+                            sort: "${this.filterData.sort}"
+                        ) {
+                            id
+                            title
+                            image_path
+                            price
+                            features
+                            colors
+                            category {
+                                title
+                            }
+                        }
+                    }
+                `;
+                    const response = await axios.post('/graphql', {
+                        query: query
+                    });
+                    this.products = response.data.data.SearchProducts
+                }
+
             }
         },
-        async meilisearchfilter(type, value) {
-            this.filterData[type] = value;
+        mounted() {
+            this.fetchProducts(this.currentPage);
+        },
+        name: 'ProductComponent'
 
-            // Filter parametresini oluştur
-            const filterConditions = [];
-            if (this.filterData.category) {
-                filterConditions.push(`category = "${this.filterData.category}"`);
-            }
-            if (this.filterData.color) {
-                filterConditions.push(`color = "${this.filterData.color}"`);
-            }
-            if (this.filterData.features) {
-                filterConditions.push(`features = "${this.filterData.features}"`);
-            }
-            if (this.filterData.price) {
-                filterConditions.push(`price <= ${this.filterData.price}`);
-            }
-            
-            
-            const filters = filterConditions.join(' AND ');
-            
-            try {
-                // Meilisearch API'sine istek gönder
-                const response = await axios.get('http://localhost:7700/indexes/products_index/search', {
-                    params: {
-                        filter: filters
-                    }
-                });
-                console.log(response);
-                
-                this.products = response.data.hits;
-                
-            } catch (error) {
-                console.error('Error fetching products:', error);
-            }
-            
-        }
-    },
-    mounted() {
-        this.fetchProducts(this.currentPage);
-    },
-    name: 'ProductComponent'
-
-}
+    }
 
 </script>
 <style lang="">

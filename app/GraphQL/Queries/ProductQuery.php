@@ -3,8 +3,6 @@
 namespace App\GraphQL\Queries;
 
 use App\Models\Product;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Request;
 
 class ProductQuery
 {

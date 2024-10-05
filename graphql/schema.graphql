@@ -22,7 +22,14 @@ type Query {
         @field(resolver: "App\\GraphQL\\Mutations\\Product@product_list_edit")
     productPage(page: Int!, perPage: Int!): ProductPagination!
         @field(resolver: "App\\GraphQL\\Queries\\ProductQuery@products")
-    SearchProducts(filter: String): [Product]
+    SearchProducts(
+        category: String
+        color: String
+        features: String
+        min_price: Int
+        max_price: Int
+        sort: String
+    ): [Product]
         @field(
             resolver: "App\\GraphQL\\Resolvers\\SearchProducts@SearchProducts"
         )

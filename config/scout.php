@@ -141,7 +141,7 @@ return [
             // ],
             Product::class => [
                 'filterableAttributes' => ['category', 'colors', 'price', 'features'],
-                'sortableAttributes' => ['price']
+                'sortableAttributes' => ['price', 'created_at'],
             ],
         ],
     ],
