@@ -3,25 +3,42 @@
 namespace App\GraphQL\Queries;
 
 use App\Models\Product;
-
+use Illuminate\Support\Facades\Redis;
 class ProductQuery
 {
     public function products($_, array $args)
     {
-        $perPage= $args['perPage'] ?? 10;
-        $page= $args['page'] ?? 1;
-        $query = Product::query();
-        $products = $query->paginate($perPage, ['*'], 'page', $page);
-
-        return [
-            'data' => $products->items(),
-            'paginatorInfo' => [
-                'total' => $products->total(),
-                'currentPage' => $products->currentPage(),
-                'lastPage' => $products->lastPage(),
-                'per_page' => $products->perPage(),
-                'hasMorePages' => $products->hasMorePages(),
-            ]
-        ];
+        $perPage = isset($args['perPage']) ? (int) $args['perPage'] : 20;
+        $page = isset($args['page']) ? (int) $args['page'] : 1;
+        $key = 'products:paginate:'. $page;
+        if(Redis::exists($key)) {
+            $cachedData = json_decode(Redis::get($key), true);
+            return [
+                'data' => $cachedData['products'],
+                'paginatorInfo' => [
+                    'total' => $cachedData['total'],
+                    'currentPage' => $page,
+                    'lastPage' => $cachedData['lastPage'],
+                    'per_page' => $perPage,
+                    'hasMorePages' => $cachedData['hasMorePages'],
+                ]
+            ];
+        } else {
+            $products = Product::search("*")->paginate($perPage, 'page', $page);
+            Redis::set($key.':products', $products);
+            Redis::set($key.':total', $products->total());
+            Redis::set($key.':lastPage', $products->lastPage());
+            Redis::set($key.':hasMorePages', $products->hasMorePages());
+            return [
+                'data' => $products,
+                'paginatorInfo' => [
+                    'total' => $products->total(),
+                    'currentPage' => $page,
+                    'lastPage' => $products->lastPage(),
+                    'per_page' => $perPage,
+                    'hasMorePages' => $products->hasMorePages(),
+                ]
+            ];
+        }
     }
 }

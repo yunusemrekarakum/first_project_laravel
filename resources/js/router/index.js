@@ -5,7 +5,6 @@ const HomePage = {
     template: `
         <div>
             <header-component></header-component>
-            <filter-component></filter-component>
             <product-component></product-component>
         </div>
     `,

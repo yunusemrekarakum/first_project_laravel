@@ -16,7 +16,8 @@
                         <label for="">Kategoriler</label>
                         <select class="form-select" v-model="formData.category_id">
                             <option disabled selected>Kategori Seçiniz</option>
-                            <option v-for="category_list in categories" :value="category_list.id">
+                            <option v-for="category_list in categories" v-bind:key="category_list.id"
+                                :value="category_list.id">
                                 {{category_list.title}}
                             </option>
                         </select>
@@ -31,7 +32,7 @@
                     </div>
                     <div class="input-area">
                         <label for="">Renk</label>
-                        <input type="color" class="form-control" v-model="formData.color">
+                        <input type="color" class="form-control" v-model="formData.colors">
                     </div>
                     <div class="input-area">
                         <label for="">Ürün Resmi</label>
@@ -58,7 +59,7 @@
                     title: null,
                     price: null,
                     features: null,
-                    color: null,
+                    colors: null,
                     category_id: null,
                 }
             };
@@ -66,7 +67,7 @@
         methods: {
             product_image(e) {
                 const file = e.target.files[0]
-                if (file){
+                if (file) {
                     this.image_path = file;
                 } else {
                     this.image_path = null;
@@ -84,7 +85,7 @@
                         $category_id: ID!,
                         $price: String!,
                         $features: String!,
-                        $color: String!,
+                        $colors: String!,
                         $file: Upload!
                     ) {
                         AddProduct(
@@ -92,7 +93,7 @@
                         category_id: $category_id,
                         price: $price,
                         features: $features,
-                        color: $color,
+                        colors: $colors,
                         image_path: $file
                         ) {
                             id
@@ -103,15 +104,17 @@
                     query: query,
                     variables: {
                         title: this.formData.title,
-                        category_id: this.formData.category_id,
+                        category_id: Number(this.formData.category_id),
                         price: this.formData.price,
                         features: this.formData.features,
-                        color: this.formData.color,
+                        colors: this.formData.colors,
                         file: null
                     }
                 };
                 formData.append('operations', JSON.stringify(operations));
-                const map = { '0': ['variables.file'] };
+                const map = {
+                    '0': ['variables.file']
+                };
                 formData.append('map', JSON.stringify(map));
                 formData.append('0', this.image_path);
                 try {

@@ -15,11 +15,8 @@
                     <div class="input-area">
                         <label for="">Kategoriler</label>
                         <select class="form-select" v-model="formData.category.id">
-                            <option
-                                v-for="category_list in categories"
-                                :value="category_list.id"
-                                :selected="category_list == formData.category.id"
-                            >
+                            <option v-for="category_list in categories" :value="category_list.id"
+                                :selected="category_list == formData.category.id" v-bind:key="category_list.id">
                                 {{ category_list.title }}
                             </option>
                         </select>
@@ -58,32 +55,32 @@
     </div>
 </template>
 <script>
-import axios from "axios";
+    import axios from "axios";
 
-export default {
-    name: "AddComponent",
-    data() {
-        return {
-            categories: [],
-            formData: {
-                title: null,
-                price: null,
-                features: null,
-                colors: null,
-                image_path: null,
-                category_id: null,
-                category: {
-                    id: null,
-                    title: null
+    export default {
+        name: "AddComponent",
+        data() {
+            return {
+                categories: [],
+                formData: {
+                    title: null,
+                    price: null,
+                    features: null,
+                    colors: null,
+                    image_path: null,
+                    category_id: null,
+                    category: {
+                        id: null,
+                        title: null
+                    }
                 }
-            }
-        };
-    },
-    methods: {
-        async get_product() {
-            const productId = this.$route.params.id;
-            const response = await axios.post('/graphql', {
-                query: `
+            };
+        },
+        methods: {
+            async get_product() {
+                const productId = this.$route.params.id;
+                const response = await axios.post('/graphql', {
+                    query: `
                     query {
                         EditListProduct(id:${productId}) {
                             id
@@ -99,15 +96,15 @@ export default {
                         }
                     }
                 `
-            })
-            this.formData = response.data.data.EditListProduct;
-            if (this.formData.category) {
-                this.formData.category_id = this.formData.category.id;
-            }
-        },
-        async get_category() {
-            const response = await axios.post("/graphql", {
-                query: `
+                })
+                this.formData = response.data.data.EditListProduct;
+                if (this.formData.category) {
+                    this.formData.category_id = this.formData.category.id;
+                }
+            },
+            async get_category() {
+                const response = await axios.post("/graphql", {
+                    query: `
                         query {
                             categories {
                                 id
@@ -115,20 +112,20 @@ export default {
                             }
                         }
                     `
-            })
-            this.categories = response.data.data.categories
-        },
-        product_image(e) {
-            const file = e.target.files[0]
-            if (file) {
-                this.image_path = file;
-            } else {
-                this.image_path = null;
-            }
-        },
-        async product_edit() {
-            const productId = this.$route.params.id;
-            const query = `
+                })
+                this.categories = response.data.data.categories
+            },
+            product_image(e) {
+                const file = e.target.files[0]
+                if (file) {
+                    this.image_path = file;
+                } else {
+                    this.image_path = null;
+                }
+            },
+            async product_edit() {
+                const productId = this.$route.params.id;
+                const query = `
                     mutation(
                         $id: ID!
                         $title: String,
@@ -151,42 +148,44 @@ export default {
                         }
                     }
                 `;
-            const operations = {
-                query: query,
-                variables: {
-                    id: productId,
-                    title: this.formData.title,
-                    category_id: this.formData.category.id,
-                    price: this.formData.price,
-                    features: this.formData.features,
-                    colors: this.formData.colors,
-                    file: null
+                const operations = {
+                    query: query,
+                    variables: {
+                        id: productId,
+                        title: this.formData.title,
+                        category_id: this.formData.category.id,
+                        price: this.formData.price,
+                        features: this.formData.features,
+                        colors: this.formData.colors,
+                        file: null
+                    }
+                };
+                const formData = new FormData;
+                formData.append('operations', JSON.stringify(operations));
+                const map = {
+                    '0': ['variables.file']
+                };
+                formData.append('map', JSON.stringify(map));
+                if (this.image_path != null) {
+                    formData.append('0', this.image_path);
                 }
-            };
-            const formData = new FormData;
-            formData.append('operations', JSON.stringify(operations));
-            const map = {'0': ['variables.file']};
-            formData.append('map', JSON.stringify(map));
-            if (this.image_path != null) {
-                formData.append('0', this.image_path);
+                try {
+                    const response = await axios.post('/graphql', formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                        },
+                    });
+                    console.log('Product added successfully:', response.data);
+                } catch (error) {
+                    console.error('Error adding product:', error);
+                }
             }
-            try {
-                const response = await axios.post('/graphql', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                });
-                console.log('Product added successfully:', response.data);
-            } catch (error) {
-                console.error('Error adding product:', error);
-            }
+        },
+        mounted() {
+            this.get_product();
+            this.get_category();
         }
-    },
-    mounted() {
-        this.get_product();
-        this.get_category();
     }
-}
 
 </script>
 <style>

@@ -3,12 +3,18 @@
 namespace App\GraphQL\Mutations;
 
 use App\Models\Product as model_product;
-use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 use Illuminate\Http\UploadedFile;
+use MeiliSearch\Client;
 use Exception;
 
 class Product
 {
+    protected $meiliSearchClient;
+
+    public function __construct()
+    {
+        $this->meiliSearchClient = new Client('http://meilisearch:7700', 'masterKey');
+    }
     public function product_add($_, array $args)
     {
 
@@ -20,12 +26,22 @@ class Product
         $image_path = asset('media/' . $image->store('products', 'media'));
         $product = model_product::create([
             'title' => $args['title'],
-            'category_id' => $args['category_id'],
-            'price' => $args['price'],
+            'category_id' => (int) $args['category_id'],
+            'price' => (int) $args['price'],
             'features' => $args['features'],
-            'colors' => $args['color'],
+            'colors' => $args['colors'],
             'image_path' => $image_path,
         ]);
+        $index = $this->meiliSearchClient->index('products_index');
+        $products = model_product::all();
+        $documents = $products->map(function ($product) {
+            return $product->toSearchableArray();
+        })->toArray();
+        try {
+            $index->addDocuments($documents);
+        } catch (Exception $e) {
+            throw new Exception('Veri ekleme hatası: ' . $e->getMessage());
+        }
         return $product;
     }
 
@@ -39,6 +55,15 @@ class Product
         $data = model_product::find($args['id']);
         if (!empty($data)) {
             $data->delete();
+            $index = $this->meiliSearchClient->index('products_index');
+            $documents = $data->map(function ($product) {
+                return $product->toSearchableArray();
+            })->toArray();
+            try {
+                $index->deleteDocuments($documents);
+            } catch (Exception $e) {
+                throw new Exception('Veri ekleme hatası: ' . $e->getMessage());
+            }
             return "silindi";
         } else {
             return "silinmedi";
@@ -66,6 +91,20 @@ class Product
             $product->price = $args['price'];
             $product->features = $args['features'];
             $product->colors = $args['colors'];
+
+
+            $index = $this->meiliSearchClient->index('products_index');
+            $products = model_product::all();
+            $documents = $products->map(function ($product) {
+                return $product->toSearchableArray();
+            })->toArray();
+            try {
+                $index->updateDocuments($documents);
+            } catch (Exception $e) {
+                throw new Exception('Veri ekleme hatası: ' . $e->getMessage());
+            }
+
+
             $product->save();
         } else {
             throw new \Exception("Böyle Bir Veri Yok");

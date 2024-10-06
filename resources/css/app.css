@@ -1,3 +1,4 @@
+@charset "utf-8";
 body {
     background-color: #e5e5e5 !important;
 }
@@ -230,6 +231,7 @@ a {
     padding: 6px 20px;
     border-radius: 4px;
     color: #000;
+    text-align: center;
 }
 
 .login-btn-area {
@@ -237,6 +239,7 @@ a {
     align-items: center;
     justify-content: space-between;
     margin-top: 40px;
+    gap: 10px;
 }
 
 .site-btn.login-btn {
@@ -291,15 +294,6 @@ a {
     font-size: 30px;
     font-weight: 600;
     margin-bottom: 35px;
-}
-
-.site-btn {
-    background-color: transparent;
-    border: 1px solid #000 !important;
-    display: block;
-    padding: 6px 20px;
-    border-radius: 4px;
-    color: #000;
 }
 
 .form-input {

@@ -1,13 +1,24 @@
 import './bootstrap';
-import { createApp } from 'vue';
+import {
+    createApp
+} from 'vue';
 import App from './components/App.vue';
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faBagShopping } from '@fortawesome/free-solid-svg-icons';
-import { faUser as farUser } from '@fortawesome/free-regular-svg-icons';
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import {
+    library
+} from '@fortawesome/fontawesome-svg-core';
+import {
+    FontAwesomeIcon
+} from '@fortawesome/vue-fontawesome';
+import {
+    faBagShopping
+} from '@fortawesome/free-solid-svg-icons';
+import {
+    faUser as farUser
+} from '@fortawesome/free-regular-svg-icons';
+import {
+    faChevronDown
+} from '@fortawesome/free-solid-svg-icons';
 import HeaderComponent from "./components/HeaderComponent.vue";
-import FilterComponent from "./components/FilterComponent.vue";
 import ProductComponent from "./components/ProductComponent.vue";
 import LoginComponent from "./components/LoginComponent.vue";
 import RegisterComponent from "./components/RegisterComponent.vue";
@@ -26,8 +37,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 import router from "./router/index.js";
 import Vue3Session from "vue3-session";
-
-
+import Toast from "vue-toastification";
+import "vue-toastification/dist/index.css";
+import { Form, Field, ErrorMessage, defineRule } from 'vee-validate';
+import * as Yup from 'yup';
 library.add(farUser, faBagShopping, faChevronDown);
 
 const app = createApp(App);
@@ -37,11 +50,20 @@ var options = {
     expiry: 1,
 }
 app.use(Vue3Session, options)
+app.use(Toast, {
+    transition: "Vue-Toastification__bounce",
+    maxToasts: 20,
+    newestOnTop: true
+});
+defineRule('required', value => !!value || 'Bu alan zorunludur.');
+defineRule('min', (value, args) => {
+    return value.length >= args[0] || `En az ${args[0]} karakter olmalı.`;
+});
+
 app.use(router)
 
 app.component('font-awesome-icon', FontAwesomeIcon);
 app.component('header-component', HeaderComponent);
-app.component('filter-component', FilterComponent);
 app.component('product-component', ProductComponent);
 app.component('login-component', LoginComponent);
 app.component('register-component', RegisterComponent);
@@ -56,4 +78,8 @@ app.component('account-admin', AccountAdmin);
 app.component('category-add', CategoryAdd);
 app.component('category-list', CategoryList);
 app.component('category-edit', CategoryEdit);
+
+app.component('Form', Form);
+app.component('Field', Field);
+app.component('ErrorMessage', ErrorMessage);
 app.mount('#app');

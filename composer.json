@@ -15,6 +15,7 @@
         "meilisearch/meilisearch-php": "^1.10",
         "mll-lab/laravel-graphiql": "^3.2",
         "nuwave/lighthouse": "^6.45",
+        "predis/predis": "*",
         "spatie/laravel-medialibrary": "^11.9"
     },
     "require-dev": {

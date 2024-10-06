@@ -27,8 +27,7 @@
                         </button>
                         <div class="filter-content" v-if="visibleFilters.filter1">
                             <div class="filter-search-area">
-                                <input v-model="filterData.category"
-                                    @input="meilisearchfilter(filterData.category)">
+                                <input v-model="filterData.category" @input="meilisearchfilter(filterData.category)">
                             </div>
                         </div>
                     </div>
@@ -60,8 +59,7 @@
                         </button>
                         <div class="filter-content" v-if="visibleFilters.filter3">
                             <div class="filter-search-area">
-                                <input v-model="filterData.features"
-                                    @input="meilisearchfilter(filterData.features)">
+                                <input v-model="filterData.features" @input="meilisearchfilter(filterData.features)">
                             </div>
                         </div>
                     </div>
@@ -101,8 +99,10 @@
                         <div class="filter-content" v-if="visibleFilters.filter5">
                             <div class="filter-search-area">
                                 <ul class="w-100">
-                                    <li><button @click="meilisearchfilter('desc')" class="btn p-0 w-100">New</button></li>
-                                    <li><button @click="meilisearchfilter('asc')" class="btn p-0 w-100">Old</button></li>
+                                    <li><button @click="meilisearchfilter('desc')" class="btn p-0 w-100">New</button>
+                                    </li>
+                                    <li><button @click="meilisearchfilter('asc')" class="btn p-0 w-100">Old</button>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -138,13 +138,16 @@
                 <button @click="fetchProducts(currentPage - 1)" :disabled="currentPage === 1"
                     class="page-link">Önceki</button>
             </li>
-            <li class="page-item">
+            <li class="page-item" v-if="currentPage+1 <= lastPage">
                 <button @click="fetchProducts(currentPage+1)" class="page-link">{{ currentPage+1 }}</button>
             </li>
-            <li class="page-item">
+            <li class="page-item" v-else>
+                <button @click="fetchProducts(currentPage-1)" class="page-link">{{ currentPage-1 }}</button>
+            </li>
+            <li class="page-item" v-if="currentPage+2 < lastPage">
                 <button @click="fetchProducts(currentPage+2)" class="page-link">{{ currentPage+2 }}</button>
             </li>
-            <li class="page-item">
+            <li class="page-item" v-if="currentPage+3 < lastPage">
                 <button @click="fetchProducts(currentPage+3)" class="page-link">{{ currentPage+3 }}</button>
             </li>
             <li class="page-item" :class="{ disabled: !hasMorePages }">
@@ -164,6 +167,7 @@
                 products: [],
                 currentPage: 1,
                 perPage: 20,
+                lastPage: null,
                 hasMorePages: false,
                 query: '',
                 visibleFilters: {
@@ -220,6 +224,7 @@
                     this.products = data.data;
                     this.currentPage = data.paginatorInfo.currentPage;
                     this.hasMorePages = data.paginatorInfo.hasMorePages;
+                    this.lastPage = data.paginatorInfo.lastPage;
                     window.scrollTo({
                         top: 0,
                         behavior: 'auto'
@@ -243,10 +248,10 @@
                 }
             },
             async meilisearchfilter(value) {
-                if(value == 'desc' || value == 'asc') {
+                if (value == 'desc' || value == 'asc') {
                     this.filterData.sort = value;
                 }
-                
+
                 if (value.length > 1) {
                     const query = `
                     query {
