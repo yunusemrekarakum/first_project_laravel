@@ -97,6 +97,12 @@ const routes = [
         component: HomePage,
     },
     {
+        path: '/:page',
+        name: 'Page',
+        component: HomePage,
+        props: true,
+    },
+    {
         path: '/giris-yap',
         name: 'Login',
         component: LoginPage,

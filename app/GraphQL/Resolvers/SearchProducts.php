@@ -5,6 +5,7 @@ use App\Models\Product;
 use MeiliSearch\Client;
 use Laravel\Scout\Searchable;
 use Exception;
+use Illuminate\Support\Facades\Redis;
 
 class SearchProducts
 {
@@ -54,21 +55,66 @@ class SearchProducts
             $sort = $args['sort'];
             $options['sort'][] = "created_at:$sort";
 
+        } else {
+            $sort = 'desc';
+            $options['sort'][] = "created_at:$sort";
         }
-        if (!empty($options['filter'])) {
-            $options['filter'] = implode(' AND ', $options['filter']);
+        if (empty($options['filter'])) {
+            $key = 'products:paginate:'. $page;
+            if (Redis::exists($key)) {
+                $cachedData = json_decode(Redis::get($key), true);
+                return [
+                    'results' => $cachedData['results'],
+                    'total' => $cachedData['total'],
+                    'lastPage' => $cachedData['lastPage'],
+                    'currentPage' => $page,
+                ];
+            } else {
+                if (!empty($options['filter'])) {
+                    $options['filter'] = implode(' AND ', $options['filter']);
+                }
+                $products = $index->search('*', $options);
+                $total = $products->getRaw()['nbHits'];
+                $cachedData = [
+                    'results' => $products->getHits(),
+                    'total' => $total,
+                    'lastPage' => ceil($total / $perPage),
+                    'currentPage' => $page,
+                ];
+                Redis::set($key, json_encode($cachedData), 'EX', 3600);
+                return [
+                    'results' => $products->getHits(),
+                    'total' => $total,
+                    'lastPage' => ceil($total / $perPage),
+                    'currentPage' => $page,
+                ];
+            }
+        } else {
+            $filters = $options['filter'];
+            $cacheKey = 'products:filter:' . implode('_', $filters) . ':page:' . $page;
+            if (Redis::exists($cacheKey)) {
+                $cachedData = json_decode(Redis::get($cacheKey), true);
+                return [
+                    'results' => $cachedData['results'],
+                    'total' => $cachedData['total'],
+                    'lastPage' => $cachedData['lastPage'],
+                    'currentPage' => $page,
+                ];
+            } else {
+                if (!empty($options['filter'])) {
+                    $options['filter'] = implode(' AND ', $options['filter']);
+                }
+                $products = $index->search('*', $options);
+                $total = $products->getRaw()['nbHits'];
+                $cachedData = [
+                    'results' => $products->getHits(),
+                    'total' => $total,
+                    'lastPage' => ceil($total / $perPage),
+                    'currentPage' => $page,
+                ];
+                Redis::set($cacheKey, json_encode($cachedData), 'EX', 3600);
+                return $cachedData;
+            }
         }
-        try {
-            $products = $index->search('*', $options);
-        } catch (Exception $e) {
-            throw new Exception('Arama hatası: ' . $e->getMessage());
-        }
-        $total = $products->getRaw()['nbHits'];
-        return [
-            'results' => $products->getHits(),
-            'total' => $total,
-            'lastPage' => ceil($total / $perPage),
-            'currentPage' => $page,
-        ];
     }
 }

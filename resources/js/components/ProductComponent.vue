@@ -19,7 +19,7 @@
                         <button class="filter-btn" @click="filterbtn('filter1')">
                             <div class="filter-btn-left">
                                 <span class="mini-text">Category</span>
-                                <p>All Categories</p>
+                                <p>{{ filterData.category ? filterData.category : 'All Categories' }}</p>
                             </div>
                             <div class="filter-icon">
                                 <font-awesome-icon :icon="['fas', 'chevron-down']" />
@@ -27,7 +27,8 @@
                         </button>
                         <div class="filter-content" v-if="visibleFilters.filter1">
                             <div class="filter-search-area">
-                                <input v-model="filterData.category" @input="meilisearchfilter(filterData.category, perPage)">
+                                <input v-model="filterData.category"
+                                    @input="meilisearchfilter(filterData.category, 1)">
                             </div>
                         </div>
                     </div>
@@ -35,7 +36,7 @@
                         <button class="filter-btn" @click="filterbtn('filter2')">
                             <div class="filter-btn-left">
                                 <span class="mini-text">Color</span>
-                                <p>All Colors</p>
+                                <p>{{ filterData.color ? filterData.color : 'All Colors' }}</p>
                             </div>
                             <div class="filter-icon">
                                 <font-awesome-icon :icon="['fas', 'chevron-down']" />
@@ -43,7 +44,8 @@
                         </button>
                         <div class="filter-content" v-if="visibleFilters.filter2">
                             <div class="filter-search-area">
-                                <input v-model="filterData.color" @input="meilisearchfilter(filterData.color, perPage)">
+                                <input v-model="filterData.color"
+                                    @input="meilisearchfilter(filterData.color, 1)">
                             </div>
                         </div>
                     </div>
@@ -51,7 +53,7 @@
                         <button class="filter-btn" @click="filterbtn('filter3')">
                             <div class="filter-btn-left">
                                 <span class="mini-text">Features</span>
-                                <p>All Features</p>
+                                <p>{{ filterData.features ? filterData.features : 'All Features' }}</p>
                             </div>
                             <div class="filter-icon">
                                 <font-awesome-icon :icon="['fas', 'chevron-down']" />
@@ -59,7 +61,8 @@
                         </button>
                         <div class="filter-content" v-if="visibleFilters.filter3">
                             <div class="filter-search-area">
-                                <input v-model="filterData.features" @input="meilisearchfilter(filterData.features, perPage)">
+                                <input v-model="filterData.features"
+                                    @input="meilisearchfilter(filterData.features, 1)">
                             </div>
                         </div>
                     </div>
@@ -67,7 +70,10 @@
                         <button class="filter-btn" @click="filterbtn('filter4')">
                             <div class="filter-btn-left">
                                 <span class="mini-text">Price</span>
-                                <p>From €0 - €1000</p>
+                                <p>
+                                    From {{ filterData.min_price ? filterData.min_price : '0' }}₺ -
+                                    {{ filterData.max_price ? filterData.max_price : '1000' }}₺
+                                </p>
                             </div>
                             <div class="filter-icon">
                                 <font-awesome-icon :icon="['fas', 'chevron-down']" />
@@ -77,9 +83,9 @@
                             <div class="filter-search-area">
                                 <div class="d-flex align-items-center">
                                     <input v-model="filterData.min_price" placeholder="Min"
-                                        @input="meilisearchfilter(filterData.min_price, perPage)">
+                                        @input="meilisearchfilter(filterData.min_price, currentPage)">
                                     <input v-model="filterData.max_price" placeholder="Max"
-                                        @input="meilisearchfilter(filterData.max_price, perPage)">
+                                        @input="meilisearchfilter(filterData.max_price, currentPage)">
                                 </div>
                             </div>
                         </div>
@@ -99,9 +105,11 @@
                         <div class="filter-content" v-if="visibleFilters.filter5">
                             <div class="filter-search-area">
                                 <ul class="w-100">
-                                    <li><button @click="meilisearchfilter('desc', perPage)" class="btn p-0 w-100">New</button>
+                                    <li><button @click="meilisearchfilter('desc', currentPage)"
+                                            class="btn p-0 w-100">New</button>
                                     </li>
-                                    <li><button @click="meilisearchfilter('asc', perPage)" class="btn p-0 w-100">Old</button>
+                                    <li><button @click="meilisearchfilter('asc', currentPage)"
+                                            class="btn p-0 w-100">Old</button>
                                     </li>
                                 </ul>
                             </div>
@@ -135,23 +143,22 @@
     <nav aria-label="Page navigation example" class="mt-5 mb-5">
         <ul class="pagination justify-content-center">
             <li class="page-item" :class="{ disabled: currentPage === 1 }">
-                <button @click="fetchProducts(currentPage - 1)" :disabled="currentPage === 1"
+                <button @click="meilisearchfilter(formData,currentPage - 1)" :disabled="currentPage === 1"
                     class="page-link">Önceki</button>
             </li>
+            <li class="page-item" v-if="currentPage-1 >= 1">
+                <button @click="meilisearchfilter(formData,currentPage-1)"
+                    class="page-link">{{ currentPage-1 }}</button>
+            </li>
+            <li class="page-item active">
+                <span @click="meilisearchfilter(formData,currentPage)" class="page-link active">{{ currentPage }}</span>
+            </li>
             <li class="page-item" v-if="currentPage+1 <= lastPage">
-                <button @click="fetchProducts(currentPage+1)" class="page-link">{{ currentPage+1 }}</button>
-            </li>
-            <li class="page-item" v-else>
-                <button @click="fetchProducts(currentPage-1)" class="page-link">{{ currentPage-1 }}</button>
-            </li>
-            <li class="page-item" v-if="currentPage+2 < lastPage">
-                <button @click="fetchProducts(currentPage+2)" class="page-link">{{ currentPage+2 }}</button>
-            </li>
-            <li class="page-item" v-if="currentPage+3 < lastPage">
-                <button @click="fetchProducts(currentPage+3)" class="page-link">{{ currentPage+3 }}</button>
+                <button @click="meilisearchfilter(formData,currentPage+1)"
+                    class="page-link">{{ currentPage+1 }}</button>
             </li>
             <li class="page-item" :class="{ disabled: lastPage === currentPage }">
-                <button @click="fetchProducts(currentPage + 1)" :disabled="!hasMorePages"
+                <button @click="meilisearchfilter(formData, currentPage + 1)" :disabled="lastPage === currentPage"
                     class="page-link">Sonraki</button>
             </li>
         </ul>
@@ -165,7 +172,8 @@
             return {
                 productimg: '../assets/img/product.jpg',
                 products: [],
-                currentPage: 1,
+                currentPage: isNaN(parseInt(window.location.pathname.split('/').pop())) ? 1 : parseInt(window.location
+                    .pathname.split('/').pop()),
                 perPage: 20,
                 lastPage: null,
                 hasMorePages: false,
@@ -188,51 +196,6 @@
             };
         },
         methods: {
-            async fetchProducts(page) {
-                const query = `
-                query($page:Int!, $perPage: Int!) {
-                    productPage(page: $page, perPage: $perPage) {
-                        data {
-                            id
-                            title
-                            image_path
-                            price
-                            features
-                            colors
-                            category {
-                                title
-                            }
-                        }
-                        paginatorInfo {
-                            currentPage
-                            lastPage
-                            hasMorePages
-                            total
-                        }
-                    }
-                }
-            `;
-                try {
-                    const response = await axios.post('/graphql', {
-                        query,
-                        variables: {
-                            page,
-                            perPage: this.perPage,
-                        },
-                    })
-                    const data = response.data.data.productPage;
-                    this.products = data.data;
-                    this.currentPage = data.paginatorInfo.currentPage;
-                    this.hasMorePages = data.paginatorInfo.hasMorePages;
-                    this.lastPage = data.paginatorInfo.lastPage;
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'auto'
-                    })
-                } catch (error) {
-                    console.error("Arama sırasında bir hata oluştu:", error);
-                }
-            },
             filterbtn(filter) {
                 for (const key in this.visibleFilters) {
                     if (key == filter) {
@@ -251,7 +214,6 @@
                 if (value == 'desc' || value == 'asc') {
                     this.filterData.sort = value;
                 }
-
                 const query = `
                     query {
                         SearchProducts(
@@ -288,11 +250,15 @@
                 this.products = data.results
                 this.currentPage = data.currentPage;
                 this.lastPage = data.lastPage;
-
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'auto'
+                })
+                history.replaceState(null, '', this.currentPage)
             }
         },
         mounted() {
-            this.meilisearchfilter(this.filterData, this.perPage);
+            this.meilisearchfilter(this.filterData, this.currentPage);
         },
         name: 'ProductComponent'
 
