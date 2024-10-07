@@ -29,10 +29,18 @@ type Query {
         min_price: Int
         max_price: Int
         sort: String
-    ): [Product]
+        page: Int!
+        perPage: Int!
+    ): SearchProductsResult
         @field(
             resolver: "App\\GraphQL\\Resolvers\\SearchProducts@SearchProducts"
         )
+}
+type SearchProductsResult {
+    results: [Product]
+    currentPage: Int!
+    lastPage: Int!
+    total: Int!
 }
 type ProductPagination {
     data: [Product!]!

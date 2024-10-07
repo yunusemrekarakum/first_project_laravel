@@ -27,7 +27,7 @@
                         </button>
                         <div class="filter-content" v-if="visibleFilters.filter1">
                             <div class="filter-search-area">
-                                <input v-model="filterData.category" @input="meilisearchfilter(filterData.category)">
+                                <input v-model="filterData.category" @input="meilisearchfilter(filterData.category, perPage)">
                             </div>
                         </div>
                     </div>
@@ -43,7 +43,7 @@
                         </button>
                         <div class="filter-content" v-if="visibleFilters.filter2">
                             <div class="filter-search-area">
-                                <input v-model="filterData.color" @input="meilisearchfilter(filterData.color)">
+                                <input v-model="filterData.color" @input="meilisearchfilter(filterData.color, perPage)">
                             </div>
                         </div>
                     </div>
@@ -59,7 +59,7 @@
                         </button>
                         <div class="filter-content" v-if="visibleFilters.filter3">
                             <div class="filter-search-area">
-                                <input v-model="filterData.features" @input="meilisearchfilter(filterData.features)">
+                                <input v-model="filterData.features" @input="meilisearchfilter(filterData.features, perPage)">
                             </div>
                         </div>
                     </div>
@@ -77,9 +77,9 @@
                             <div class="filter-search-area">
                                 <div class="d-flex align-items-center">
                                     <input v-model="filterData.min_price" placeholder="Min"
-                                        @input="meilisearchfilter(filterData.min_price)">
+                                        @input="meilisearchfilter(filterData.min_price, perPage)">
                                     <input v-model="filterData.max_price" placeholder="Max"
-                                        @input="meilisearchfilter(filterData.max_price)">
+                                        @input="meilisearchfilter(filterData.max_price, perPage)">
                                 </div>
                             </div>
                         </div>
@@ -99,9 +99,9 @@
                         <div class="filter-content" v-if="visibleFilters.filter5">
                             <div class="filter-search-area">
                                 <ul class="w-100">
-                                    <li><button @click="meilisearchfilter('desc')" class="btn p-0 w-100">New</button>
+                                    <li><button @click="meilisearchfilter('desc', perPage)" class="btn p-0 w-100">New</button>
                                     </li>
-                                    <li><button @click="meilisearchfilter('asc')" class="btn p-0 w-100">Old</button>
+                                    <li><button @click="meilisearchfilter('asc', perPage)" class="btn p-0 w-100">Old</button>
                                     </li>
                                 </ul>
                             </div>
@@ -150,7 +150,7 @@
             <li class="page-item" v-if="currentPage+3 < lastPage">
                 <button @click="fetchProducts(currentPage+3)" class="page-link">{{ currentPage+3 }}</button>
             </li>
-            <li class="page-item" :class="{ disabled: !hasMorePages }">
+            <li class="page-item" :class="{ disabled: lastPage === currentPage }">
                 <button @click="fetchProducts(currentPage + 1)" :disabled="!hasMorePages"
                     class="page-link">Sonraki</button>
             </li>
@@ -247,15 +247,16 @@
                     }
                 }
             },
-            async meilisearchfilter(value) {
+            async meilisearchfilter(value, page_val) {
                 if (value == 'desc' || value == 'asc') {
                     this.filterData.sort = value;
                 }
 
-                if (value.length > 1) {
-                    const query = `
+                const query = `
                     query {
                         SearchProducts(
+                            page: ${page_val},
+                            perPage: ${this.perPage},
                             category: "${this.filterData.category}",
                             color: "${this.filterData.color}",
                             features: "${this.filterData.features}",
@@ -263,28 +264,35 @@
                             max_price: ${this.filterData.max_price},
                             sort: "${this.filterData.sort}"
                         ) {
-                            id
-                            title
-                            image_path
-                            price
-                            features
-                            colors
-                            category {
+                            results {
+                                id
                                 title
+                                image_path
+                                price
+                                features
+                                colors
+                                category {
+                                    title
+                                }
                             }
+                            currentPage
+                            lastPage
+                            total
                         }
                     }
                 `;
-                    const response = await axios.post('/graphql', {
-                        query: query
-                    });
-                    this.products = response.data.data.SearchProducts
-                }
+                const response = await axios.post('/graphql', {
+                    query: query
+                });
+                const data = response.data.data.SearchProducts;
+                this.products = data.results
+                this.currentPage = data.currentPage;
+                this.lastPage = data.lastPage;
 
             }
         },
         mounted() {
-            this.fetchProducts(this.currentPage);
+            this.meilisearchfilter(this.filterData, this.perPage);
         },
         name: 'ProductComponent'
 

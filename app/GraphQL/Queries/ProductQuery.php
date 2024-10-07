@@ -4,6 +4,7 @@ namespace App\GraphQL\Queries;
 
 use App\Models\Product;
 use Illuminate\Support\Facades\Redis;
+use Exception;
 class ProductQuery
 {
     public function products($_, array $args)
@@ -25,10 +26,13 @@ class ProductQuery
             ];
         } else {
             $products = Product::search("*")->paginate($perPage, 'page', $page);
-            Redis::set($key.':products', $products);
-            Redis::set($key.':total', $products->total());
-            Redis::set($key.':lastPage', $products->lastPage());
-            Redis::set($key.':hasMorePages', $products->hasMorePages());
+            //$cachedData = [
+            //    'products' => $products,
+            //    'total' => $products->total(),
+            //    'lastPage' => $products->lastPage(),
+            //    'hasMorePages' => $products->hasMorePages(),
+            //];
+            //Redis::set($key, json_encode($cachedData));
             return [
                 'data' => $products,
                 'paginatorInfo' => [

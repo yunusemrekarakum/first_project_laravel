@@ -34,8 +34,10 @@ class Product extends Model implements HasMedia
             'price' => (int) $this->price,
             'features' => $this->features,
             'colors' => $this->colors,
-            'created_at' => $this->created_at, //sonradan ekledim ve bunu indexe aktarmak istiyorum
-            'category' => $category->title,
+            'created_at' => $this->created_at,
+            'category' => [
+                'title' => $category->title,
+            ],
         ];
     }
 }
