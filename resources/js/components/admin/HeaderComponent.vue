@@ -80,9 +80,9 @@ export default {
             const token = $session.get("token");
             const adminquery = `
                 query {
-                    admin {
-                        user_name
-                        name_surname
+                    user {
+                        name
+                        email
                         profile_image
                     }
                 }`;

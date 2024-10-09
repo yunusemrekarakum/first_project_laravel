@@ -16,7 +16,8 @@
         "mll-lab/laravel-graphiql": "^3.2",
         "nuwave/lighthouse": "^6.45",
         "predis/predis": "*",
-        "spatie/laravel-medialibrary": "^11.9"
+        "spatie/laravel-medialibrary": "^11.9",
+        "spatie/laravel-permission": "^6.9"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

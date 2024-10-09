@@ -39,7 +39,12 @@ import router from "./router/index.js";
 import Vue3Session from "vue3-session";
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
-import { Form, Field, ErrorMessage, defineRule } from 'vee-validate';
+import {
+    Form,
+    Field,
+    ErrorMessage,
+    defineRule
+} from 'vee-validate';
 import * as Yup from 'yup';
 library.add(farUser, faBagShopping, faChevronDown);
 
@@ -53,7 +58,19 @@ app.use(Vue3Session, options)
 app.use(Toast, {
     transition: "Vue-Toastification__bounce",
     maxToasts: 20,
-    newestOnTop: true
+    newestOnTop: true,
+    position: "top-right",
+    timeout: 5000,
+    closeOnClick: true,
+    pauseOnFocusLoss: true,
+    pauseOnHover: true,
+    draggable: true,
+    draggablePercent: 0.6,
+    showCloseButtonOnHover: true,
+    hideProgressBar: true,
+    closeButton: "button",
+    icon: true,
+    rtl: false
 });
 defineRule('required', value => !!value || 'Bu alan zorunludur.');
 defineRule('min', (value, args) => {
