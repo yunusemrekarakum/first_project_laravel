@@ -21,20 +21,26 @@
                                 <li><router-link to="/admin/kategori-ekle">Ekle</router-link></li>
                             </ul>
                         </li>
+                        <li>
+                            <router-link to="/admin-listele">Admin</router-link>
+                            <ul class="sub-menu">
+                                <li><router-link to="/admin-ekle">Ekle</router-link></li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
                 <div class="admin-account">
                     <div class="admin-account-content">
                         <div class="user-photo">
                             <router-link to="/admin/hesabim">
-                                <img :src="admin_info.profile_image" alt=""
-                                     v-if="admin_info && admin_info.profile_image">
+                                <img :src="user_info.profile_image" alt=""
+                                     v-if="user_info && user_info.profile_image">
                                 <img :src="userphoto" alt="" v-else>
                             </router-link>
                         </div>
                         <div class="user-info">
                             <router-link to="/admin/hesabim">
-                                <span class="user-name" v-if="admin_info">{{ admin_info.name_surname }}</span>
+                                <span class="user-name" v-if="user_info">{{ user_info.name }}</span>
                                 <div class="icon">
                                 </div>
                             </router-link>
@@ -71,14 +77,14 @@ export default {
     name: "HeaderComponent",
     setup() {
         const $session = inject('$vsession');
-        const admin_info = ref(null);
+        const user_info = ref(null);
         const logout = () => {
             $session.destroy("token");
             router.push({name: "AdminLogin"})
         }
-        const AdminInfoGet = async () => {
+        const UserInfoGet = async () => {
             const token = $session.get("token");
-            const adminquery = `
+            const userquery = `
                 query {
                     user {
                         name
@@ -86,21 +92,21 @@ export default {
                         profile_image
                     }
                 }`;
-            const response = await axios.post('/graphql', {query: adminquery}, {
+            const response = await axios.post('/graphql', {query: userquery}, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             })
-            admin_info.value = response.data.data.admin;
+            user_info.value = response.data.data.user;
         };
         onMounted(() => {
-            AdminInfoGet();
+            UserInfoGet();
         });
         return {
             logout,
-            AdminInfoGet,
-            admin_info,
+            UserInfoGet,
+            user_info,
         };
     },
 

@@ -22,6 +22,7 @@ class User
             'email' => $args['email'],
             'password' => bcrypt($args['password']),
         ]);
+        $user->assignRole('User');
 
         $token = $user->createToken(
             'user_token', ['*'], now()->addMinutes(120)
@@ -95,5 +96,12 @@ class User
         $user->save();
 
         return $user;
+    }
+    public function get_user_role($_, array $args) {
+        $user = Auth::guard('user')->user();
+        $role = $user->getRoleNames()->first();
+        return [
+            'role' => $role
+        ];
     }
 }

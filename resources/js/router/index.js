@@ -1,4 +1,4 @@
-import {createRouter, createWebHistory} from 'vue-router';
+import { createRouter, createWebHistory } from "vue-router";
 import LoginAdmin from "../components/admin/LoginComponent.vue";
 
 const HomePage = {
@@ -16,7 +16,7 @@ const LoginPage = {
             <login-component></login-component>
         </div>
     `,
-}
+};
 const RegisterPage = {
     template: `
         <div>
@@ -24,7 +24,7 @@ const RegisterPage = {
             <register-component></register-component>
         </div>
     `,
-}
+};
 const AccountPage = {
     template: `
         <div>
@@ -32,7 +32,7 @@ const AccountPage = {
             <account-component></account-component>
         </div>
     `,
-}
+};
 //admin
 const AdminPage = {
     template: `
@@ -49,7 +49,7 @@ const ProductAdd = {
             <add-admin></add-admin>
         </div>
     `,
-}
+};
 const ProductEdit = {
     template: `
         <div>
@@ -57,7 +57,7 @@ const ProductEdit = {
             <edit-admin></edit-admin>
         </div>
     `,
-}
+};
 const AdminAccount = {
     template: `
         <div>
@@ -65,7 +65,7 @@ const AdminAccount = {
             <account-admin></account-admin>
         </div>
     `,
-}
+};
 const CategoryAdd = {
     template: `
         <div>
@@ -73,7 +73,7 @@ const CategoryAdd = {
             <category-add></category-add>
         </div>
     `,
-}
+};
 const CategoryList = {
     template: `
         <div>
@@ -81,7 +81,7 @@ const CategoryList = {
             <category-list></category-list>
         </div>
     `,
-}
+};
 const CategoryEdit = {
     template: `
         <div>
@@ -89,115 +89,186 @@ const CategoryEdit = {
             <category-edit></category-edit>
         </div>
     `,
-}
+};
+const AdminCreate = {
+    template: `
+        <div>
+            <header-admin></header-admin>
+            <admin-add></admin-add>
+        </div>
+    `,
+};
+const AdminList = {
+    template: `
+        <div>
+            <header-admin></header-admin>
+            <admin-list></admin-list>
+        </div>
+    `,
+};
 const routes = [
     {
-        path: '/',
-        name: 'Home',
+        path: "/",
+        name: "Home",
         component: HomePage,
     },
     {
-        path: '/:page',
-        name: 'Page',
+        path: "/:page",
+        name: "Page",
         component: HomePage,
         props: true,
     },
     {
-        path: '/giris-yap',
-        name: 'Login',
+        path: "/giris-yap",
+        name: "Login",
         component: LoginPage,
-        meta: {requiresAuth: false}
+        meta: { requiresAuth: false },
     },
     {
-        path: '/kayit-ol',
-        name: 'Register',
+        path: "/kayit-ol",
+        name: "Register",
         component: RegisterPage,
     },
     {
-        path: '/hesabim',
-        name: 'Account',
+        path: "/hesabim",
+        name: "Account",
         component: AccountPage,
+        meta: { requiresAuth: true, role: "User" },
     },
     {
-        path: '/admin-giris',
-        name: 'AdminLogin',
+        path: "/admin-giris",
+        name: "AdminLogin",
         component: LoginAdmin,
-        meta: {requiresAuth: false}
+        meta: { requiresAuth: false },
     },
     {
-        path: '/admin',
-        name: 'Admin',
+        path: "/admin",
+        name: "Admin",
         component: AdminPage,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true, role: "Admin" },
     },
     {
-        path: '/admin/urun-ekle',
-        name: 'ProductAdd',
+        path: "/admin/urun-ekle",
+        name: "ProductAdd",
         component: ProductAdd,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true, role: "Admin" },
     },
     {
-        path: '/admin/urun-duzenle/:id',
-        name: 'ProductEdit',
+        path: "/admin/urun-duzenle/:id",
+        name: "ProductEdit",
         component: ProductEdit,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true, role: "Admin" },
     },
     {
-        path: '/admin/hesabim',
-        name: 'AdminAccount',
+        path: "/admin/hesabim",
+        name: "AdminAccount",
         component: AdminAccount,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true, role: "Admin" },
     },
     {
-        path: '/admin/kategori-listele',
-        name: 'CategoryList',
+        path: "/admin/kategori-listele",
+        name: "CategoryList",
         component: CategoryList,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true, role: "Admin" },
     },
     {
-        path: '/admin/kategori-ekle',
-        name: 'CategoryAdd',
+        path: "/admin/kategori-ekle",
+        name: "CategoryAdd",
         component: CategoryAdd,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true, role: "Admin" },
     },
     {
-        path: '/admin/kategori-duzenle/:id',
-        name: 'CategoryEdit',
+        path: "/admin/kategori-duzenle/:id",
+        name: "CategoryEdit",
         component: CategoryEdit,
-        meta: {requiresAuth: true}
-    }
-]
+        meta: { requiresAuth: true, role: "Admin" },
+    },
+    {
+        path: "/admin-ekle",
+        name: "AdminCreate",
+        component: AdminCreate,
+        meta: { requiresAuth: true, role: "Admin" },
+    },
+    {
+        path: "/admin-listele",
+        name: "AdminList",
+        component: AdminList,
+        meta: { requiresAuth: true, role: "Admin" },
+    },
+];
 const router = createRouter({
     history: createWebHistory(),
-    routes
+    routes,
 });
-
-
+async function getUserRole(token) {
+    try {
+        const userquery = `
+        query {
+            userRole {
+                role
+            }
+        }`;
+        const response = await axios.post(
+            "/graphql",
+            {
+                query: userquery,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+        return response.data.data.userRole.role;
+    } catch (error) {
+        return null;
+    }
+}
 
 router.beforeEach(async (to, from, next) => {
-    const sessionData = localStorage.getItem('vue-session-key');
+    const sessionData = localStorage.getItem("vue-session-key");
+
     if (sessionData) {
-        const tokenExpiry = JSON.parse(localStorage.getItem('vue-session-key')).token_expiry;
+        const tokenExpiry = JSON.parse(
+            localStorage.getItem("vue-session-key")
+        ).token_expiry;
         if (tokenExpiry) {
             const expiryDate = new Date(tokenExpiry);
             if (new Date(new Date().getTime()) > expiryDate) {
-                localStorage.removeItem('vue-session-key');
+                localStorage.removeItem("vue-session-key");
             }
         }
     }
-    const isAuthenticated = sessionData ? !!JSON.parse(sessionData).token : false;
-    if (to.name == 'AdminLogin') {
+    const isAuthenticated = sessionData
+        ? !!JSON.parse(sessionData).token
+        : false;
+    const role = await getUserRole(JSON.parse(sessionData).token);
+
+    if (to.name == "AdminLogin") {
         if (isAuthenticated) {
-            next({name: "Admin"})
+            next({ name: "Admin" });
         } else {
-            next()
+            next();
         }
     } else {
         if (to.meta.requiresAuth) {
             if (!isAuthenticated) {
-                next({name: "AdminLogin"})
+                next({ name: "AdminLogin" });
+            }
+            if (role === to.meta.role) {
+                next();
             } else {
-                next()
+                if (role === "Admin") {
+                    if (!isAuthenticated) {
+                        next({ name: "AdminLogin" });
+                    }
+                    next();
+                } else if (role === "User") {
+                    next({ name: "Home" });
+                } else {
+                    next({ name: "Login" });
+                }
             }
         } else {
             next();

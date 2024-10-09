@@ -5,6 +5,10 @@ scalar Upload
 
 type Query {
     user: User @field(resolver: "App\\GraphQL\\Mutations\\User@get_user")
+    userRole: Role
+        @field(resolver: "App\\GraphQL\\Mutations\\User@get_user_role")
+    allUser: [User]
+        @field(resolver: "App\\GraphQL\\Resolvers\\AdminResolver@all_user")
     categories: [Category!]!
     category(id: ID!): Category
     products: [Product!]!
@@ -24,6 +28,9 @@ type Query {
         @field(
             resolver: "App\\GraphQL\\Resolvers\\SearchProducts@SearchProducts"
         )
+}
+type Role {
+    role: String
 }
 type SearchProductsResult {
     results: [Product]
