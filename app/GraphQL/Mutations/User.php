@@ -25,7 +25,9 @@ class User
         $user->assignRole('User');
 
         $token = $user->createToken(
-            'user_token', ['*'], now()->addMinutes(120)
+            'user_token',
+            ['*'],
+            now()->addMinutes(120)
         )->plainTextToken;
 
         return [
@@ -53,7 +55,9 @@ class User
         }
 
         $token = $user->createToken(
-            'user_token', ['*'], now()->addMinutes(120)
+            'user_token',
+            ['*'],
+            now()->addMinutes(120)
         )->plainTextToken;
 
         return [
@@ -77,7 +81,6 @@ class User
                 $user->password = bcrypt($args['password']);
             } else {
                 throw new Exception("Yeni Şifre Alanı Doldurulmalı");
-                
             }
         }
         // Verileri güncelle
@@ -88,7 +91,7 @@ class User
             $user->email = $args['email'];
         }
         if (isset($args['profile_image'])) {
-            $newFileName = 'profile_'.time().'_'.$user->id.'.'.$args['profile_image']->getClientOriginalExtension();
+            $newFileName = 'profile_' . time() . '_' . $user->id . '.' . $args['profile_image']->getClientOriginalExtension();
             $last_media = $user->addMedia($args['profile_image'])->setFileName($newFileName)->toMediaCollection('profile', 'media');
             $user->profile_image = $last_media->getUrl();
         }
@@ -97,11 +100,32 @@ class User
 
         return $user;
     }
-    public function get_user_role($_, array $args) {
+    public function get_user_role($_, array $args)
+    {
         $user = Auth::guard('user')->user();
+        if (!$user) {
+            throw new Exception("Error Processing Request", 1);
+        }
         $role = $user->getRoleNames()->first();
         return [
             'role' => $role
         ];
+    }
+    public function Admin_authority($_, array $args)
+    {
+        $userıd = $args['id'];
+        $user = user_model::find($userıd);
+        if (!$user->hasRole('Admin')) {
+            $user->removeRole('User');
+            $user->assignRole('Admin');
+        }
+        return $user;
+    }
+    public function delete_user($_, array $args)
+    {
+        $id = $args['id'];
+        $user = user_model::findOrFail($id);
+        $user->delete();
+        return true;
     }
 }

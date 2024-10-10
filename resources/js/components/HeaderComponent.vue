@@ -82,6 +82,7 @@
                         'Content-Type': 'application/json'
                     }
                 })
+                
                 if(!response.data.data.errors) {
                     user_info.value = response.data.data.user;
                 }

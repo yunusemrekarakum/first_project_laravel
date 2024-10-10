@@ -28,6 +28,8 @@ type Query {
         @field(
             resolver: "App\\GraphQL\\Resolvers\\SearchProducts@SearchProducts"
         )
+    Admin_authority(id: Int): User
+        @field(resolver: "App\\GraphQL\\Mutations\\User@Admin_authority")
 }
 type Role {
     role: String
@@ -98,6 +100,8 @@ type Mutation {
         features: String
         colors: String
     ): Product @field(resolver: "App\\GraphQL\\Mutations\\Product@product_edit")
+    Delete_user(id: ID!): String
+        @field(resolver: "App\\GraphQL\\Mutations\\User@delete_user")
 }
 
 type AuthPayload {

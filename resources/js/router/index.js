@@ -243,7 +243,9 @@ router.beforeEach(async (to, from, next) => {
     const isAuthenticated = sessionData
         ? !!JSON.parse(sessionData).token
         : false;
-    const role = await getUserRole(JSON.parse(sessionData).token);
+    if (sessionData != null) {
+        var role = await getUserRole(JSON.parse(sessionData).token);
+    }
 
     if (to.name == "AdminLogin") {
         if (isAuthenticated) {

@@ -14,7 +14,12 @@ class AdminResolver
     public function all_user($_, array $args)
     {
         $users = User::all();
-
-        return $users;
+        $nonAdminUsers = [];
+        foreach ($users as $user) {
+            if (!$user->hasRole('Admin')) {
+                $nonAdminUsers[] = $user;
+            }
+        }
+        return $nonAdminUsers;
     }
 }
