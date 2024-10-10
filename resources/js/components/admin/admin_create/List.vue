@@ -3,7 +3,7 @@
         <div class="container">
             <div class="list-top">
                 <div class="list-top-left">
-                    <h1 class="title">Ürünler</h1>
+                    <h1 class="title">Admin List</h1>
                 </div>
             </div>
             <table class="table table-striped">

@@ -24,6 +24,7 @@ services:
             - ./storage:/var/www/html/storage
             - ./public:/var/www/html/public
             - ./bootstrap/cache:/var/www/html/bootstrap/cache
+            - ./database:/var/www/html/database:cached
         networks:
             - sail
         depends_on:

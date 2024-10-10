@@ -19,11 +19,11 @@ class Product extends Model implements HasMedia
         return $this->belongsTo(Category::class);
     }
 
-    public function searchableAs() :string
+    public function searchableAs(): string
     {
         return 'products_index';
     }
-    
+
     public function toSearchableArray()
     {
         $category = $this->category;
