@@ -148,6 +148,13 @@ const routes = [
         meta: { requiresAuth: true, role: "Admin" },
     },
     {
+        path: "/admin/:page",
+        name: "AdminPage",
+        component: AdminPage,
+        props: true,
+        meta: { requiresAuth: true, role: "Admin" },
+    },
+    {
         path: "/admin/urun-ekle",
         name: "ProductAdd",
         component: ProductAdd,
@@ -170,6 +177,13 @@ const routes = [
         name: "CategoryList",
         component: CategoryList,
         meta: { requiresAuth: true, role: "Admin" },
+    },
+    {
+        path: "/admin/kategori-listele/:page",
+        name: "CategoryPage",
+        component: CategoryList,
+        meta: { requiresAuth: true, role: "Admin" },
+        props: true,
     },
     {
         path: "/admin/kategori-ekle",
@@ -261,7 +275,7 @@ router.beforeEach(async (to, from, next) => {
             if (role === to.meta.role) {
                 next();
             } else {
-                if (role === "Admin") {
+                if (role === "Super Admin") {
                     if (!isAuthenticated) {
                         next({ name: "AdminLogin" });
                     }

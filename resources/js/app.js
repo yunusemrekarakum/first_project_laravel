@@ -47,7 +47,7 @@ import {
     ErrorMessage,
     defineRule
 } from 'vee-validate';
-import * as Yup from 'yup';
+
 library.add(farUser, faBagShopping, faChevronDown);
 
 const app = createApp(App);

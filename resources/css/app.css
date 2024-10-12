@@ -538,3 +538,14 @@ ul.admin-account-other-link li button {
     height: 25px;
     object-fit: cover;
 }
+.permission-select-box span {
+    display: inline-block;
+    padding: 10px 10px;
+    background-color: #198754;
+    color: #fff;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    line-height: 13px;
+    cursor: pointer;
+}

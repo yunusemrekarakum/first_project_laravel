@@ -8,18 +8,18 @@ use Illuminate\Support\Facades\Hash;
 use GraphQL\Type\Definition\ResolveInfo;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
+use Exception;
+use Spatie\Permission\Models\Permission;
 
 class AdminResolver
 {
     public function all_user($_, array $args)
     {
-        $users = User::all();
-        $nonAdminUsers = [];
-        foreach ($users as $user) {
-            if (!$user->hasRole('Admin')) {
-                $nonAdminUsers[] = $user;
-            }
-        }
-        return $nonAdminUsers;
+        $users = User::with('permissions')->get();
+        return $users;
+    }
+    public function permissions_get($_, array $args)
+    {
+        return Permission::all();
     }
 }

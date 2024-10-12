@@ -1,4 +1,5 @@
 <?php
+
 namespace App\GraphQL\Resolvers;
 
 use App\Models\Product;
@@ -25,7 +26,7 @@ class SearchProducts
 
         $options = [
             'filter' => [],
-            'sort' => [], 
+            'sort' => [],
             'limit' => $perPage,
             'offset' => $offset,
         ];
@@ -34,12 +35,12 @@ class SearchProducts
             $category = $args['category'];
             $options['filter'][] = 'category.title CONTAINS "' . addslashes($category) . '"';
         }
-        
-        if(!empty($args['color']) and $args['color'] != 'null') {
+
+        if (!empty($args['color']) and $args['color'] != 'null') {
             $color = $args['color'];
             $options['filter'][] = 'colors CONTAINS "' . addslashes($color) . '"';
         }
-        if(isset($args['features']) and $args['features'] != 'null') {
+        if (isset($args['features']) and $args['features'] != 'null') {
             $features = $args['features'];
             $options['filter'][] = 'features CONTAINS "' . addslashes($features) . '"';
         }
@@ -54,13 +55,12 @@ class SearchProducts
         if ($args['sort'] == 'desc' || $args['sort'] == 'asc') {
             $sort = $args['sort'];
             $options['sort'][] = "created_at:$sort";
-
         } else {
             $sort = 'desc';
             $options['sort'][] = "created_at:$sort";
         }
         if (empty($options['filter'])) {
-            $key = 'products:paginate:'. $page;
+            $key = 'products:paginate:' . $page;
             if (Redis::exists($key)) {
                 $cachedData = json_decode(Redis::get($key), true);
                 return [

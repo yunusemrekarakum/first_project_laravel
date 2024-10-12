@@ -7,13 +7,23 @@
                 </div>
             </div>
             <div class="admin-panel-form">
-                <form @submit.prevent="CategoryEdit">
+                <form @submit.prevent="handleSubmit">
                     <div class="input-area">
                         <label for="">Kategori İsmi</label>
-                        <input type="text" class="form-control" v-model="Category_list.title">
+                        <Field
+                            name="title"
+                            as="input"
+                            rules="required"
+                            type="text"
+                            class="form-control"
+                            v-model="formData.title"
+                        />
+                        <ErrorMessage name="title" class="text-danger" />
                     </div>
                     <div class="d-flex justify-content-end mt-4">
-                        <button type="submit" class="btn btn-outline-success">Güncelle</button>
+                        <button type="submit" class="btn btn-outline-success">
+                            Güncelle
+                        </button>
                     </div>
                 </form>
             </div>
@@ -21,55 +31,80 @@
     </div>
 </template>
 <script>
+import { ref, onMounted } from "vue";
 import axios from "axios";
+import { useRouter } from "vue-router";
+import { useToast } from "vue-toastification";
+import { Field, ErrorMessage, useForm } from "vee-validate";
+import * as yup from "yup";
 
 export default {
-    name: "AddComponent",
-    data() {
-        return {
-            Category_list: []
+    setup() {
+        const formData = ref({
+            title: "",
+        });
+        const router = useRouter();
+        const categoryId = ref(router.currentRoute.value.params.id);
+        const toast = useToast();
+        const validationSchema = yup.object({
+            title: yup.string().required("Ürün ismi girimiz."),
+        });
+        const { handleSubmit, errors } = useForm({
+            validationSchema,
+            initialValues: formData,
+        });
+
+        const handleSubmitWithValidation = async () => {
+            const isValid = await handleSubmit(CategoryEdit)();
+            if (!isValid) {
+                for (const key in errors.value) {
+                    if (errors.value[key]) {
+                        toast.error(errors.value[key]);
+                    }
+                }
+            }
         };
-    },
-    methods : {
-        async CategoryEdit() {
-            const title = this.Category_list.title
-            const categoryId = this.$route.params.id;
+        const CategoryEdit = async () => {
+            const title = formData.value.title;
             try {
                 const response = await axios.post("/graphql", {
                     query: `
                         mutation {
-                            EditCategories(id:"${categoryId}",title:"${title}") {
+                            EditCategories(id:"${categoryId.value}",title:"${title}") {
                                 id
-                                title
                             }
                         }
-                    `
+                    `,
                 });
-                console.log(response.data.data.EditCategories)
+                if (response.data.errors && response.data.errors.length > 0) {
+                    toast.error(response.data.errors[0].message);
+                } else {
+                    toast.success("Kategori Güncellendi");
+                }
             } catch (error) {
-                console.log(error)
+                toast.error(error);
             }
-        },
-        async CategoryGet() {
-            const categoryId = this.$route.params.id;
+        };
+        const CategoryGet = async () => {
             const response = await axios.post("/graphql", {
                 query: `
                     mutation {
-                        EditListCategory(id: ${categoryId}) {
+                        EditListCategory(id: ${categoryId.value}) {
                             title
                         }
                     }
-                `
-            })
-            this.Category_list = response.data.data.EditListCategory
-        }
+                `,
+            });
+            formData.value = response.data.data.EditListCategory;
+        };
+        onMounted(() => {
+            CategoryGet();
+        });
+        return {
+            formData,
+            handleSubmit: handleSubmitWithValidation,
+        };
     },
-    mounted() {
-        this.CategoryGet();
-    }
-}
-
+};
 </script>
-<style>
-
-</style>
+<style></style>

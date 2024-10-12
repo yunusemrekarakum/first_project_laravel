@@ -9,6 +9,10 @@ type Query {
         @field(resolver: "App\\GraphQL\\Mutations\\User@get_user_role")
     allUser: [User]
         @field(resolver: "App\\GraphQL\\Resolvers\\AdminResolver@all_user")
+    permissionget: [Permission!]!
+        @field(
+            resolver: "App\\GraphQL\\Resolvers\\AdminResolver@permissions_get"
+        )
     categories: [Category!]!
     category(id: ID!): Category
     products: [Product!]!
@@ -30,6 +34,16 @@ type Query {
         )
     Admin_authority(id: Int): User
         @field(resolver: "App\\GraphQL\\Mutations\\User@Admin_authority")
+    productPage(page: Int, perPage: Int): Product_Pagination!
+        @field(resolver: "App\\GraphQL\\Mutations\\Product@product_admin_list")
+    categryPage(page: Int, perPage: Int): Category_Pagination!
+        @field(
+            resolver: "App\\GraphQL\\Mutations\\Category@category_admin_list"
+        )
+    give_admin_permission(id: Int!, permission: String!): Admin
+        @field(
+            resolver: "App\\GraphQL\\Resolvers\\AdminResolver@admin_permission"
+        )
 }
 type Role {
     role: String
@@ -44,13 +58,17 @@ type SearchProductsResult {
 type User {
     id: ID!
     name: String!
-    email: String!
+    email: String
     email_verified_at: DateTime
     profile_image: String
     created_at: DateTime!
     updated_at: DateTime!
+    permissions: [Permission]
 }
-
+type Permission {
+    id: ID
+    name: String
+}
 type Admin {
     id: ID!
     user_name: String!
@@ -103,7 +121,20 @@ type Mutation {
     Delete_user(id: ID!): String
         @field(resolver: "App\\GraphQL\\Mutations\\User@delete_user")
 }
-
+type Product_Pagination {
+    data: [Product!]!
+    paginatorInfo: PaginatorInfo!
+}
+type Category_Pagination {
+    data: [Category!]!
+    paginatorInfo: PaginatorInfo!
+}
+type PaginatorInfo {
+    hasMorePages: Boolean!
+    currentPage: Int!
+    lastPage: Int!
+    total: Int!
+}
 type AuthPayload {
     token: String!
     user: User

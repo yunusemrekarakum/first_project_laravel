@@ -12,6 +12,7 @@
                         <th scope="col">#</th>
                         <th scope="col">İsim</th>
                         <th scope="col">Email</th>
+                        <th scope="col">Adminlik</th>
                         <th scope="col">Yetkilendir</th>
                         <th scope="col">Sil</th>
                     </tr>
@@ -28,6 +29,23 @@
                             >
                                 Admin Yap
                             </button>
+                        </td>
+                        <td style="width: 45%">
+                            <div class="permission-select-box">
+                                <span
+                                    v-for="permission in this.permission"
+                                    :key="permission.id"
+                                    :style="{
+                                        backgroundColor: value.permissions.some(
+                                            (p) => p.id === permission.id
+                                        )
+                                            ? '#198754'
+                                            : 'red',
+                                    }"
+                                >
+                                    {{ permission.name }}
+                                </span>
+                            </div>
                         </td>
                         <td>
                             <button
@@ -118,6 +136,7 @@ export default {
             lastPage: null,
             query: "",
             toast: useToast(),
+            permission: null,
         };
     },
     methods: {
@@ -128,14 +147,23 @@ export default {
                         id
                         name
                         email
+                        permissions {
+                            id
+                            name
+                        }
+                    }
+                    permissionget {
+                        id
+                        name
                     }
                 }
             `;
             const response = await axios.post("graphql", {
                 query: query,
             });
+            console.log(response);
             this.users = response.data.data.allUser;
-            console.log(this.users);
+            this.permission = response.data.data.permissionget;
         },
         async admin_add(id) {
             try {
@@ -173,10 +201,12 @@ export default {
                     query: query,
                 });
                 this.toast.success("Silme İşlemi Başarılı");
-                this.get_user()
+                this.get_user();
             } catch (error) {
                 this.toast.error(error);
             }
+        },
+        async permission_update() {
         },
     },
     mounted() {
