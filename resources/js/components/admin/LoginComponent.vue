@@ -58,25 +58,30 @@
     </div>
 </template>
 <script>
-import { inject, ref } from "vue";
+import { inject, ref, computed } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import { useToast } from "vue-toastification";
 import { Field, ErrorMessage, useForm } from "vee-validate";
 import * as yup from "yup";
+import { useStore } from "vuex";
 export default {
     name: "LoginComponent",
     setup() {
         const toast = useToast();
-        const $session = inject("$vsession");
         const formData = ref({
             email: "",
             password: "",
         });
         const router = useRouter();
+        const store = useStore();
+        const userRole = computed(() => store.state.userRole);
 
         const validationSchema = yup.object().shape({
-            email: yup.string().required("Email adı boş bırakılamaz").email("Geçerli bir Email adresi girin"),
+            email: yup
+                .string()
+                .required("Email adı boş bırakılamaz")
+                .email("Geçerli bir Email adresi girin"),
             password: yup
                 .string()
                 .required("Şifre boş bırakılamaz")
@@ -87,37 +92,17 @@ export default {
             validationSchema,
         });
         const onSubmit = async () => {
-            errors.value = {};
-
-            const mutation = `
-                    mutation {
-                    userLogin(email: "${formData.value.email}", password: "${formData.value.password}") {
-                            token
-                        }
-                    }
-                `;
             try {
-                const response = await axios.post("/graphql", {
-                    query: mutation,
+                await store.dispatch("userLogin", {
+                    email: formData.value.email,
+                    password: formData.value.password,
                 });
 
-                if (response.data.data.userLogin) {
-                    const token = response.data.data.userLogin.token;
-                    $session.set("token", token);
-                    const expiryDuration = 7200000; // 7200000 ms = 2 saat
-                    const expiryTime = new Date(
-                        new Date().getTime() + expiryDuration
-                    ); // 2 saat sonrası
-                    $session.set("token", token);
-                    $session.set("token_expiry", expiryTime.toISOString());
-                    // vue-toastification
-                    toast.success("Giriş Başarılı!");
-                    router.push("Admin");
-                } else {
-                    toast.error(response.data.errors[0].message);
-                }
+                await store.dispatch("fetchUserRole");
+                toast.success("Giriş Başarılı!");
+                router.push("Admin");
             } catch (error) {
-                toast.error(error.response.data.errors);
+                toast.error(error.message);
             }
         };
         const handleSubmitWithValidation = async () => {
@@ -134,6 +119,7 @@ export default {
             formData,
             handleSubmit: handleSubmitWithValidation,
             errors,
+            userRole,
         };
     },
 };

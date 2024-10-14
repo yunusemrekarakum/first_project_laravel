@@ -538,7 +538,7 @@ ul.admin-account-other-link li button {
     height: 25px;
     object-fit: cover;
 }
-.permission-select-box span {
+.permission-select-box button {
     display: inline-block;
     padding: 10px 10px;
     background-color: #198754;
@@ -548,4 +548,6 @@ ul.admin-account-other-link li button {
     border-radius: 5px;
     line-height: 13px;
     cursor: pointer;
+    border: transparent;
+    box-shadow: transparent;
 }

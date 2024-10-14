@@ -30,7 +30,9 @@
                                 <div class="col-lg-6">
                                     <div class="form-input">
                                         <label for="">Adınız Soyadınız</label>
-                                        <input
+                                        <Field
+                                            name="name"
+                                            as="input"
                                             type="text"
                                             class="form-control"
                                             v-if="user_info"
@@ -135,8 +137,7 @@ export default {
     name: "AccountComponent",
     setup() {
         const toast = useToast();
-        const $session = inject("$vsession");
-        const token = $session.get("token");
+        const token = JSON.parse(localStorage.getItem("session")).token;
         const user_info = ref(null);
         const profile_image = ref(null);
         const formData = ref({
@@ -159,6 +160,7 @@ export default {
             validationSchema,
         });
         const user_get_info = async () => {
+            const token = JSON.parse(localStorage.getItem("session")).token
             const userquery = `
                 query {
                     user {
@@ -177,6 +179,8 @@ export default {
                     },
                 }
             );
+            console.log();
+            
             user_info.value = response.data.data.user;
         };
         const handleFileUpload = (e) => {
@@ -186,7 +190,7 @@ export default {
             if (
                 Object.values(formData.value).some(
                     (value) => value !== null && value !== ""
-                )
+                ) || profile_image.value != null
             ) {
                 errors.value = {};
                 try {
@@ -270,7 +274,7 @@ export default {
             user_get_info();
         });
         const logout = () => {
-            $session.destroy("token");
+            localStorage.removeItem("session")
             router.push({
                 name: "AdminLogin",
             });
@@ -280,6 +284,7 @@ export default {
             formData,
             userphoto: null,
             handleSubmit: handleSubmitWithValidation,
+            handleFileUpload,
             errors,
             logout,
         };

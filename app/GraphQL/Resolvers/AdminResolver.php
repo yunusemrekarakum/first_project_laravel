@@ -15,11 +15,33 @@ class AdminResolver
 {
     public function all_user($_, array $args)
     {
-        $users = User::with('permissions')->get();
+        $users = User::with(['permissions', 'roles'])
+            ->where('id', '!=', 1)
+            ->get();
         return $users;
     }
     public function permissions_get($_, array $args)
     {
         return Permission::all();
+    }
+    public function permission_add($_, array $args)
+    {
+        $user = User::find($args['user_id']);
+        $permission = Permission::find($args['permission_id']);
+
+        if ($user->hasPermissionTo($permission->name)) {
+            $user->revokePermissionTo($permission->name);
+        } else {
+            $user->givePermissionTo($permission->name);
+        }
+        return $user->load('permissions');
+    }
+    public function user_permissions()
+    {
+        $users = Auth::guard("user")->user();
+        $permissions = $users->permissions()->pluck('name');
+        return [
+            'name' => $permissions
+        ];
     }
 }

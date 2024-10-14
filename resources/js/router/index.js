@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import LoginAdmin from "../components/admin/LoginComponent.vue";
-
+import store from "../store";
 const HomePage = {
     template: `
         <div>
@@ -90,14 +90,6 @@ const CategoryEdit = {
         </div>
     `,
 };
-const AdminCreate = {
-    template: `
-        <div>
-            <header-admin></header-admin>
-            <admin-add></admin-add>
-        </div>
-    `,
-};
 const AdminList = {
     template: `
         <div>
@@ -128,12 +120,13 @@ const routes = [
         path: "/kayit-ol",
         name: "Register",
         component: RegisterPage,
+        meta: { requiresAuth: false },
     },
     {
         path: "/hesabim",
         name: "Account",
         component: AccountPage,
-        meta: { requiresAuth: true, role: "User" },
+        meta: { requiresAuth: true, userlogin: true, role: "User" },
     },
     {
         path: "/admin-giris",
@@ -145,151 +138,159 @@ const routes = [
         path: "/admin",
         name: "Admin",
         component: AdminPage,
-        meta: { requiresAuth: true, role: "Admin" },
+        meta: {
+            requiresAuth: true,
+            role: ["Admin", "Super Admin"],
+            requiresPermission: "Products",
+        },
     },
     {
         path: "/admin/:page",
         name: "AdminPage",
         component: AdminPage,
         props: true,
-        meta: { requiresAuth: true, role: "Admin" },
+        meta: {
+            requiresAuth: true,
+            role: ["Admin", "Super Admin"],
+            requiresPermission: "Products",
+        },
     },
     {
         path: "/admin/urun-ekle",
         name: "ProductAdd",
         component: ProductAdd,
-        meta: { requiresAuth: true, role: "Admin" },
+        meta: {
+            requiresAuth: true,
+            role: ["Admin", "Super Admin"],
+            requiresPermission: "Products",
+        },
     },
     {
         path: "/admin/urun-duzenle/:id",
         name: "ProductEdit",
         component: ProductEdit,
-        meta: { requiresAuth: true, role: "Admin" },
+        meta: {
+            requiresAuth: true,
+            role: ["Admin", "Super Admin"],
+            requiresPermission: "Products",
+        },
     },
     {
         path: "/admin/hesabim",
         name: "AdminAccount",
         component: AdminAccount,
-        meta: { requiresAuth: true, role: "Admin" },
+        meta: { requiresAuth: true, role: ["Admin", "Super Admin"] },
     },
     {
         path: "/admin/kategori-listele",
         name: "CategoryList",
         component: CategoryList,
-        meta: { requiresAuth: true, role: "Admin" },
+        meta: {
+            requiresAuth: true,
+            role: ["Admin", "Super Admin"],
+            requiresPermission: "Categories",
+        },
     },
     {
         path: "/admin/kategori-listele/:page",
         name: "CategoryPage",
         component: CategoryList,
-        meta: { requiresAuth: true, role: "Admin" },
+        meta: {
+            requiresAuth: true,
+            role: ["Admin", "Super Admin"],
+            requiresPermission: "Categories",
+        },
         props: true,
     },
     {
         path: "/admin/kategori-ekle",
         name: "CategoryAdd",
         component: CategoryAdd,
-        meta: { requiresAuth: true, role: "Admin" },
+        meta: {
+            requiresAuth: true,
+            role: ["Admin", "Super Admin"],
+            requiresPermission: "Categories",
+        },
     },
     {
         path: "/admin/kategori-duzenle/:id",
         name: "CategoryEdit",
         component: CategoryEdit,
-        meta: { requiresAuth: true, role: "Admin" },
-    },
-    {
-        path: "/admin-ekle",
-        name: "AdminCreate",
-        component: AdminCreate,
-        meta: { requiresAuth: true, role: "Admin" },
+        meta: {
+            requiresAuth: true,
+            role: ["Admin", "Super Admin"],
+            requiresPermission: "Categories",
+        },
     },
     {
         path: "/admin-listele",
         name: "AdminList",
         component: AdminList,
-        meta: { requiresAuth: true, role: "Admin" },
+        meta: {
+            requiresAuth: true,
+            role: ["Admin", "Super Admin"],
+            requiresPermission: "Admins",
+        },
     },
 ];
 const router = createRouter({
     history: createWebHistory(),
     routes,
 });
-async function getUserRole(token) {
-    try {
-        const userquery = `
-        query {
-            userRole {
-                role
-            }
-        }`;
-        const response = await axios.post(
-            "/graphql",
-            {
-                query: userquery,
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-            }
-        );
-        return response.data.data.userRole.role;
-    } catch (error) {
-        return null;
-    }
-}
 
+const checkRole = (userRole, requiredRoles) => {
+    if (!Array.isArray(requiredRoles)) {
+        requiredRoles = [requiredRoles];
+    }
+    return requiredRoles.includes(userRole);
+};
 router.beforeEach(async (to, from, next) => {
-    const sessionData = localStorage.getItem("vue-session-key");
-
+    const sessionData = JSON.parse(localStorage.getItem("session"));
     if (sessionData) {
-        const tokenExpiry = JSON.parse(
-            localStorage.getItem("vue-session-key")
-        ).token_expiry;
+        const tokenExpiry = new Date(sessionData.token_time);
         if (tokenExpiry) {
-            const expiryDate = new Date(tokenExpiry);
-            if (new Date(new Date().getTime()) > expiryDate) {
-                localStorage.removeItem("vue-session-key");
+            if (new Date() > tokenExpiry) {
+                localStorage.removeItem("session");
+                return next({ name: "AdminLogin" });
             }
         }
-    }
-    const isAuthenticated = sessionData
-        ? !!JSON.parse(sessionData).token
-        : false;
-    if (sessionData != null) {
-        var role = await getUserRole(JSON.parse(sessionData).token);
     }
 
-    if (to.name == "AdminLogin") {
-        if (isAuthenticated) {
-            next({ name: "Admin" });
-        } else {
-            next();
-        }
-    } else {
-        if (to.meta.requiresAuth) {
-            if (!isAuthenticated) {
-                next({ name: "AdminLogin" });
-            }
-            if (role === to.meta.role) {
-                next();
-            } else {
-                if (role === "Super Admin") {
-                    if (!isAuthenticated) {
-                        next({ name: "AdminLogin" });
-                    }
-                    next();
-                } else if (role === "User") {
-                    next({ name: "Home" });
-                } else {
-                    next({ name: "Login" });
-                }
-            }
-        } else {
-            next();
+    const isAuthenticated = store.getters.isAuthenticated;
+    
+    if (isAuthenticated) {
+        try {
+            await store.dispatch("fetchUserRole"); // Kullanıcı rolünü al
+            await store.dispatch("fetchPermissions"); // kullanıcı izinlerini al
+        } catch (error) {
+            return next({ name: "AdminLogin" });
         }
     }
+    const requiredPermission = to.meta.requiresPermission;
+
+    const role = store.getters.userRole;
+    if (role === "Super Admin") {
+        return next();
+    }
+
+    if (to.meta.requiresAuth && isAuthenticated != true && to.meta.userlogin != true) {
+        return next({ name: "AdminLogin" });
+    }
+    if (to.meta.userlogin && isAuthenticated != true) {
+        return next({name: "Login"})
+    }
+    
+    if (to.meta.requiresAuth && to.meta.role && !checkRole(role, to.meta.role)) {
+        return next({ name: "Login" });
+    }
+
+    if (
+        requiredPermission &&
+        !store.getters.hasPermission(requiredPermission)
+    ) {
+        return next(from);
+    }
+    next(); // Tüm kontroller geçildiyse devam et
 });
 
 export default router;

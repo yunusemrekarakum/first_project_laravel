@@ -187,7 +187,7 @@ export default {
         },
         async product_delete(id) {
             try {
-                const response = await axios.post("graphql", {
+                const response = await axios.post("/graphql", {
                     query: `
                             mutation {
                                 DeleteProduct(id: ${id})
@@ -199,12 +199,12 @@ export default {
                 );
                 //this.Product_list = this.Product_list.filter(product => product.id !== id);
                 if (response.data.errors && response.data.errors.length > 0) {
-                    toast.error(response.data.errors[0].message);
+                    this.toast.error(response.data.errors[0].message);
                 } else {
-                    toast.success("Silme işlemi başarılı");
+                    this.toast.success("Silme işlemi başarılı");
                 }
             } catch (error) {
-                toast.error(error);
+                this.toast.error(error);
             }
         },
     },

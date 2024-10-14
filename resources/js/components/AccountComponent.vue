@@ -135,8 +135,7 @@ export default {
     name: "AccountComponent",
     setup() {
         const toast = useToast();
-        const $session = inject("$vsession");
-        const token = $session.get("token");
+        const token = JSON.parse(localStorage.getItem("session")).token;
         const user_info = ref(null);
         const profile_image = ref(null);
         const formData = ref({
@@ -159,6 +158,7 @@ export default {
             validationSchema,
         });
         const user_get_info = async () => {
+            const token = JSON.parse(localStorage.getItem("session")).token
             const userquery = `
                 query {
                     user {
@@ -177,6 +177,8 @@ export default {
                     },
                 }
             );
+            console.log();
+            
             user_info.value = response.data.data.user;
         };
         const handleFileUpload = (e) => {
@@ -186,7 +188,7 @@ export default {
             if (
                 Object.values(formData.value).some(
                     (value) => value !== null && value !== ""
-                )
+                ) || profile_image.value != null
             ) {
                 errors.value = {};
                 try {
@@ -247,7 +249,7 @@ export default {
                         );
                     } else {
                         toast.success("Hesap Bilgileri Güncellendi");
-                        window.location.reload();
+                        user_get_info();
                     }
                 } catch (error) {
                     toast.error(error.response.data);
@@ -270,9 +272,9 @@ export default {
             user_get_info();
         });
         const logout = () => {
-            $session.destroy("token");
+            localStorage.removeItem("session")
             router.push({
-                name: "Home",
+                name: "AdminLogin",
             });
         };
         return {
@@ -280,6 +282,7 @@ export default {
             formData,
             userphoto: null,
             handleSubmit: handleSubmitWithValidation,
+            handleFileUpload,
             errors,
             logout,
         };

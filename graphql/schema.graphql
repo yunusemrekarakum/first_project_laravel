@@ -32,7 +32,7 @@ type Query {
         @field(
             resolver: "App\\GraphQL\\Resolvers\\SearchProducts@SearchProducts"
         )
-    Admin_authority(id: Int): User
+    Admin_authority(id: Int): ToggleAdminAuthorityResponse
         @field(resolver: "App\\GraphQL\\Mutations\\User@Admin_authority")
     productPage(page: Int, perPage: Int): Product_Pagination!
         @field(resolver: "App\\GraphQL\\Mutations\\Product@product_admin_list")
@@ -44,6 +44,14 @@ type Query {
         @field(
             resolver: "App\\GraphQL\\Resolvers\\AdminResolver@admin_permission"
         )
+    user_permissions: Permission
+        @field(
+            resolver: "App\\GraphQL\\Resolvers\\AdminResolver@user_permissions"
+        )
+}
+type ToggleAdminAuthorityResponse {
+    success: Boolean!
+    message: String!
 }
 type Role {
     role: String
@@ -54,7 +62,6 @@ type SearchProductsResult {
     lastPage: Int!
     total: Int!
 }
-
 type User {
     id: ID!
     name: String!
@@ -64,8 +71,13 @@ type User {
     created_at: DateTime!
     updated_at: DateTime!
     permissions: [Permission]
+    roles: [RolesUser]
 }
 type Permission {
+    id: ID
+    name: String
+}
+type RolesUser {
     id: ID
     name: String
 }
@@ -120,6 +132,10 @@ type Mutation {
     ): Product @field(resolver: "App\\GraphQL\\Mutations\\Product@product_edit")
     Delete_user(id: ID!): String
         @field(resolver: "App\\GraphQL\\Mutations\\User@delete_user")
+    permission_add(user_id: Int, permission_id: Int): User
+        @field(
+            resolver: "App\\GraphQL\\Resolvers\\AdminResolver@permission_add"
+        )
 }
 type Product_Pagination {
     data: [Product!]!

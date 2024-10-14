@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use http\Env\Response;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use App\Models\Admin;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Http\JsonResponse;
+use Request;
 
 class AuthController extends Controller
 {
+    public function getUserRole(Request $request)
+    {
+        $user = $request->user();
+        return response()->json(['role' => $user->role]); // Kullanıcının rolü burada dönülüyor
+    }
 }

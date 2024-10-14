@@ -25,14 +25,20 @@
                         <td>
                             <button
                                 @click="admin_add(value.id)"
-                                class="btn btn-primary"
+                                class="btn" :class="value.roles[0].name == 'Admin' ? 'btn-danger' : 'btn-primary'"
                             >
-                                Admin Yap
+                                {{ value.roles[0].name == 'Admin' ? 'Adminliğini al' : 'Admin Yap' }}
                             </button>
                         </td>
                         <td style="width: 45%">
                             <div class="permission-select-box">
-                                <span
+                                <button
+                                    @click="
+                                        permission_update(
+                                            value.id,
+                                            permission.id
+                                        )
+                                    "
                                     v-for="permission in this.permission"
                                     :key="permission.id"
                                     :style="{
@@ -44,7 +50,7 @@
                                     }"
                                 >
                                     {{ permission.name }}
-                                </span>
+                                </button>
                             </div>
                         </td>
                         <td>
@@ -137,6 +143,7 @@ export default {
             query: "",
             toast: useToast(),
             permission: null,
+            toast: useToast(),
         };
     },
     methods: {
@@ -151,6 +158,9 @@ export default {
                             id
                             name
                         }
+                        roles {
+                            name
+                        }
                     }
                     permissionget {
                         id
@@ -161,7 +171,7 @@ export default {
             const response = await axios.post("graphql", {
                 query: query,
             });
-            console.log(response);
+            
             this.users = response.data.data.allUser;
             this.permission = response.data.data.permissionget;
         },
@@ -170,22 +180,19 @@ export default {
                 const query = `
                     query {
                         Admin_authority(id:${id}){
-                            id
-                            name
+                            success
+                            message
                         }
                     }`;
                 const response = await axios.post("graphql", {
                     query: query,
                 });
-                console.log(response);
-
-                if (response.data.data.Admin_authority) {
-                    this.toast.success("Admin Yapıldı!");
+                if (response.data.data.Admin_authority.success) {
+                    this.toast.success(response.data.data.Admin_authority.message);
                     await this.get_user();
                 } else {
                     this.toast.error(response.data.errors[0].message);
                 }
-                console.log(response);
             } catch (errors) {
                 this.toast.error(errors);
             }
@@ -206,7 +213,34 @@ export default {
                 this.toast.error(error);
             }
         },
-        async permission_update() {
+        async permission_update(user_id, permission_id) {
+            const query = `
+                mutation {
+                    permission_add (user_id: ${user_id}, permission_id: ${permission_id}) {
+                        id
+                        name
+                        email
+                        permissions {
+                            id
+                            name
+                        }
+                    }
+                }
+            `;
+            const response = await axios.post("graphql", {
+                query: query,
+            });
+            const updatedPermissions =
+                response.data.data.permission_add.permissions;
+            const user = this.users.find((u) => u.id === user_id);
+            if (user) {
+                user.permissions = [...updatedPermissions];
+            }
+            if (response.data.errors && response.data.errors.length > 0) {
+                this.toast.error(response.data.errors[0].message);
+            } else {
+                this.toast.success("İzinler Güncellendi");
+            }
         },
     },
     mounted() {

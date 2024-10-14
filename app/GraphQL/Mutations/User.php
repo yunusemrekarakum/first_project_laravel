@@ -104,9 +104,13 @@ class User
     {
         $user = Auth::guard('user')->user();
         if (!$user) {
-            throw new Exception("Error Processing Request", 1);
+            throw new Exception("Kullanıcı oturumu açık değil.", 401); // Hata kodunu 401 yaparak daha anlamlı hale getirebilirsiniz
         }
+
         $role = $user->getRoleNames()->first();
+        if (!$role) {
+            throw new Exception("Kullanıcının rolü bulunamadı.");
+        }
         return [
             'role' => $role
         ];
@@ -118,8 +122,18 @@ class User
         if (!$user->hasRole('Admin')) {
             $user->removeRole('User');
             $user->assignRole('Admin');
+            return [
+                'success' => true,
+                'message' => 'Admin rolü kaldırıldı.',
+            ];
+        } else {
+            $user->removeRole('Admin');
+            $user->assignRole('User');
+            return [
+                'success' => true,
+                'message' => 'Admin rolü başarıyla verildi.',
+            ];
         }
-        return $user;
     }
     public function delete_user($_, array $args)
     {

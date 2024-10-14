@@ -55,12 +55,14 @@ class SearchProducts
         if ($args['sort'] == 'desc' || $args['sort'] == 'asc') {
             $sort = $args['sort'];
             $options['sort'][] = "created_at:$sort";
+            $sort = implode(',', $options['sort']);
         } else {
             $sort = 'desc';
             $options['sort'][] = "created_at:$sort";
+            $sort = implode(',', $options['sort']);
         }
         if (empty($options['filter'])) {
-            $key = 'products:paginate:' . $page;
+            $key = 'products:sort:' . $sort . 'paginate:' . $page;
             if (Redis::exists($key)) {
                 $cachedData = json_decode(Redis::get($key), true);
                 return [
@@ -91,7 +93,7 @@ class SearchProducts
             }
         } else {
             $filters = $options['filter'];
-            $cacheKey = 'products:filter:' . implode('_', $filters) . ':page:' . $page;
+            $cacheKey = 'products:filter:' . implode('_', $filters) . ':sort:' . $sort . ':page:' . $page;
             if (Redis::exists($cacheKey)) {
                 $cachedData = json_decode(Redis::get($cacheKey), true);
                 return [

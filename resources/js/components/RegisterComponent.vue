@@ -64,7 +64,6 @@
         name: "RegisterComponent",
         setup() {
             const toast = useToast();
-            const $session = inject('$vsession');
             const formData = ref({
                 name: '',
                 email: '',
@@ -110,12 +109,15 @@
                     
                     if (response.data.data.createUser) {
                         const token = response.data.data.createUser.token;
-                        $session.set('token', token);
                         const expiryDuration = 7200000; // 7200000 ms = 2 saat
-                        const expiryTime = new Date(new Date().getTime() + expiryDuration); // 2 saat sonrası
-                        $session.set('token', token);
-                        $session.set('token_expiry', expiryTime.toISOString());
-                        // vue-toastification
+                        const expiryTime = new Date(
+                            new Date().getTime() + expiryDuration
+                        );
+                        const sessionData = {
+                            token: token,
+                            token_time: expiryTime.toString()
+                        }
+                        localStorage.setItem("session", JSON.stringify(sessionData));
                         toast.success("Kayıt Oluşturuldu");
                         router.push("/")
                     } else {

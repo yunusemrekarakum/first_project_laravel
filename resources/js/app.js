@@ -33,7 +33,6 @@ import AccountAdmin from "./components/admin/AccountComponent.vue";
 import CategoryAdd from "./components/admin/category/AddComponent.vue";
 import CategoryList from "./components/admin/category/ListComponent.vue";
 import CategoryEdit from "./components/admin/category/EditComponent.vue";
-import AdminAdd from "./components/admin/admin_create/Add.vue";
 import AdminList from "./components/admin/admin_create/List.vue";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
@@ -41,6 +40,7 @@ import router from "./router/index.js";
 import Vue3Session from "vue3-session";
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
+import store from './store/index.js';
 import {
     Form,
     Field,
@@ -54,7 +54,7 @@ const app = createApp(App);
 
 var options = {
     persist: true,
-    expiry: 1,
+    expiry: 2,
 }
 app.use(Vue3Session, options)
 app.use(Toast, {
@@ -80,6 +80,7 @@ defineRule('min', (value, args) => {
 });
 
 app.use(router)
+app.use(store);
 
 app.component('font-awesome-icon', FontAwesomeIcon);
 app.component('header-component', HeaderComponent);
@@ -97,7 +98,6 @@ app.component('account-admin', AccountAdmin);
 app.component('category-add', CategoryAdd);
 app.component('category-list', CategoryList);
 app.component('category-edit', CategoryEdit);
-app.component('admin-add', AdminAdd);
 app.component('admin-list', AdminList);
 
 app.component('Form', Form);
