@@ -140,7 +140,7 @@ return [
             //     'filterableAttributes'=> ['id', 'name', 'email'],
             // ],
             Product::class => [
-                'filterableAttributes' => ['category', 'colors', 'price', 'features'],
+                'filterableAttributes' => ['title', 'category', 'colors', 'price', 'features'],
                 'sortableAttributes' => ['price', 'created_at'],
             ],
         ],
