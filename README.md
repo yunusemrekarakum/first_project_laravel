@@ -11,6 +11,9 @@
 ### Composer Bağımlılıklarını Yüklemek
 ```composer install```
 
+### sail başlatma
+``` sail up ```
+
 ### migrate etme
 ```sail artisan migrate```
 
@@ -19,7 +22,7 @@
 
 ### npm kurulumu ve başlatması
 
-```npm install```
+```npm install``` 
 ```npm run dev```
 
 ### meilisearch aktifleştirmek için
