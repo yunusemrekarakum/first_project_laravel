@@ -272,16 +272,17 @@ router.beforeEach(async (to, from, next) => {
     if (role === "Super Admin") {
         return next();
     }
-
-    if (to.meta.requiresAuth && isAuthenticated != true && to.meta.userlogin != true) {
-        return next({ name: "AdminLogin" });
-    }
-    if (to.meta.userlogin && isAuthenticated != true) {
-        return next({name: "Login"})
-    }
     
     if (to.meta.requiresAuth && to.meta.role && !checkRole(role, to.meta.role)) {
         return next({ name: "Login" });
+    }
+    
+    if (to.meta.requiresAuth && isAuthenticated != true && to.meta.userlogin != true) {
+        return next({ name: "AdminLogin" });
+    }
+    
+    if (to.meta.userlogin && isAuthenticated != true) {
+        return next({name: "Login"})
     }
 
     if (
