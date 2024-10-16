@@ -8,8 +8,8 @@
 ### env dosyasını kopyalama
 ```cp .env.example .env```
 
-### sail kurulumu
-```composer require laravel/sail --dev```
+### Composer Bağımlılıklarını Yüklemek
+```composer install```
 
 ### migrate etme
 ```sail artisan migrate```
