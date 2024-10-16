@@ -14,7 +14,7 @@ class SearchProducts
 
     public function __construct()
     {
-        $this->meiliSearchClient = new Client('http://meilisearch:7700', 'masterKey');
+        $this->meiliSearchClient = new Client(env('MEILISEARCH_HOST'), env('MEILISEARCH_KEY'));
     }
     public function SearchProducts($root, array $args)
     {
