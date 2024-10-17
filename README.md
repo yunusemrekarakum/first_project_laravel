@@ -84,4 +84,17 @@ sail artisan scout:import "App\Models\Product"
 curl   -X PATCH 'http://localhost:7700/experimental-features/'   -H 'Content-Type: application/json'   -H 'Authorization: Bearer masterKey'   --data-binary '{
    "containsFilter": true
  }'
+
 ```
+## admin panele giriş bilgileri
+```
+admin url: http://localhost/admin
+```
+
+```
+email: admin@gmail.com
+```
+```
+şifre: 123123
+```
+
