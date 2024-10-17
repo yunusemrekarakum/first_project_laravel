@@ -28,37 +28,37 @@ Proje laravel v11 ve Vuejs v3 ile yazılmıştır laravelde ve vuejsde kullanmı
 | **Vuex** | 4.0.2 |
 | **Yup** | 1.4.0 |
 
-1. ## Git klonlama
+## 1. Git klonlama
 
 ```bash
 git clone https://github.com/yunusemrekarakum/first_project_laravel.git
 ```
 
-2. ## env dosyasını kopyalama
+## 2. env dosyasını kopyalama
 
 ```bash
 cp .env.example .env
 ```
 
-3. ## sail kurulumu
+## 3. sail kurulumu
 
 ```bash
 composer require laravel/sail --dev
 ```
 
-4. ## migrate etme
+## 4. migrate etme
 
 ```bash
 sail artisan migrate
 ```
 
-5. ## seedleri çalıştırma
+## 5. seedleri çalıştırma
 
 ```bash
 sail artisan db:seed
 ```
 
-6. ## npm kurulumu ve başlatması
+## 6. npm kurulumu ve başlatması
 
 ```bash
 npm install
@@ -68,7 +68,7 @@ npm install
 npm run dev
 ```
 
-7. ## meilisearch aktifleştirmek için
+## 7. meilisearch aktifleştirmek için
 
 ```bash
 sail artisan scout:sync-index-settings
@@ -78,7 +78,7 @@ sail artisan scout:sync-index-settings
 sail artisan scout:import "App\Models\Product"
 ```
 
-8. ## contain filter aktifleştirmek
+## 8. contain filter aktifleştirmek
 
 ```bash
 curl   -X PATCH 'http://localhost:7700/experimental-features/'   -H 'Content-Type: application/json'   -H 'Authorization: Bearer masterKey'   --data-binary '{
