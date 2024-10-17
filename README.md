@@ -1,38 +1,52 @@
 # Proje Kurulumu
 
-
 ### Git klonlama
 
-```git clone https://github.com/yunusemrekarakum/first_project_laravel.git```
+``` bash
+git clone https://github.com/yunusemrekarakum/first_project_laravel.git
+```
 
 ### env dosyasını kopyalama
-```cp .env.example .env```
+``` bash
+cp .env.example .env
+```
 
-### Composer Bağımlılıklarını Yüklemek
-```composer install```
-
-### sail başlatma
-``` sail up ```
+### sail kurulumu
+``` bash
+composer require laravel/sail --dev
+```
 
 ### migrate etme
-```sail artisan migrate```
+``` bash
+sail artisan migrate
+```
 
 ### seedleri çalıştırma
-```sail artisan db:seed```
+``` bash
+sail artisan db:seed
+```
 
 ### npm kurulumu ve başlatması
 
-```npm install``` 
-```npm run dev```
+``` bash
+npm install
+```
+``` bash
+npm run dev
+```
 
 ### meilisearch aktifleştirmek için
 
-```sail artisan scout:sync-index-settings ```
+``` bash
+sail artisan scout:sync-index-settings 
+```
 
-```sail artisan scout:import "App\Models\Product"```
+```bash
+sail artisan scout:import "App\Models\Product"
+```
 
  ### contain filter aktifleştirmek
- ```
+ ```bash
  curl   -X PATCH 'http://localhost:7700/experimental-features/'   -H 'Content-Type: application/json'   -H 'Authorization: Bearer masterKey'   --data-binary '{                                       
     "containsFilter": true
   }'
