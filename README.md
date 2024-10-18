@@ -40,25 +40,36 @@ git clone https://github.com/yunusemrekarakum/first_project_laravel.git
 cp .env.example .env
 ```
 
-## 3. sail kurulumu
-
-```bash
-composer require laravel/sail --dev
+## 3. APP_KEY oluşturma
+``` bash
+sail artisan key:generate
 ```
 
-## 4. migrate etme
+## 4. sail kurulumu
+
+```bash
+composer install
+```
+
+## 5. sail çalıştırma
+
+```bash
+sail up
+```
+
+## 6. migrate etme
 
 ```bash
 sail artisan migrate
 ```
 
-## 5. seedleri çalıştırma
+## 7. seedleri çalıştırma
 
 ```bash
 sail artisan db:seed
 ```
 
-## 6. npm kurulumu ve başlatması
+## 8. npm kurulumu ve başlatması
 
 ```bash
 npm install
@@ -68,7 +79,7 @@ npm install
 npm run dev
 ```
 
-## 7. meilisearch aktifleştirmek için
+## 9. meilisearch aktifleştirmek için
 
 ```bash
 sail artisan scout:sync-index-settings
@@ -78,7 +89,7 @@ sail artisan scout:sync-index-settings
 sail artisan scout:import "App\Models\Product"
 ```
 
-## 8. contain filter aktifleştirmek
+## 10. contain filter aktifleştirmek
 
 ```bash
 curl   -X PATCH 'http://localhost:7700/experimental-features/'   -H 'Content-Type: application/json'   -H 'Authorization: Bearer masterKey'   --data-binary '{
