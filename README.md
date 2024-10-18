@@ -40,21 +40,21 @@ git clone https://github.com/yunusemrekarakum/first_project_laravel.git
 cp .env.example .env
 ```
 
-## 3. APP_KEY oluşturma
-``` bash
-sail artisan key:generate
-```
-
-## 4. sail kurulumu
+## 3. sail kurulumu
 
 ```bash
 composer install
 ```
 
-## 5. sail çalıştırma
+## 4. sail çalıştırma
 
 ```bash
 sail up
+```
+
+## 5. APP_KEY oluşturma
+``` bash
+sail artisan key:generate
 ```
 
 ## 6. migrate etme
