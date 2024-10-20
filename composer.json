@@ -16,6 +16,7 @@
         "mll-lab/laravel-graphiql": "^3.2",
         "nuwave/lighthouse": "^6.45",
         "predis/predis": "*",
+        "pusher/pusher-php-server": "^7.2",
         "spatie/laravel-medialibrary": "^11.9",
         "spatie/laravel-permission": "^6.9"
     },
