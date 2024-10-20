@@ -18,8 +18,8 @@
                     <div class="filter-box">
                         <button class="filter-btn" @click="filterbtn('filter1')">
                             <div class="filter-btn-left">
-                                <span class="mini-text">Category</span>
-                                <p>{{ filterData.category ? filterData.category : 'All Categories' }}</p>
+                                <span class="mini-text">Ürün İsmi</span>
+                                <p>{{ filterData.title ? filterData.title : 'All Product' }}</p>
                             </div>
                             <div class="filter-icon">
                                 <font-awesome-icon :icon="['fas', 'chevron-down']" />
@@ -27,13 +27,30 @@
                         </button>
                         <div class="filter-content" v-if="visibleFilters.filter1">
                             <div class="filter-search-area">
+                                <input v-model="filterData.title"
+                                    @input="meilisearchfilter(filterData.title, 1)">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="filter-box">
+                        <button class="filter-btn" @click="filterbtn('filter2')">
+                            <div class="filter-btn-left">
+                                <span class="mini-text">Category</span>
+                                <p>{{ filterData.category ? filterData.category : 'All Categories' }}</p>
+                            </div>
+                            <div class="filter-icon">
+                                <font-awesome-icon :icon="['fas', 'chevron-down']" />
+                            </div>
+                        </button>
+                        <div class="filter-content" v-if="visibleFilters.filter2">
+                            <div class="filter-search-area">
                                 <input v-model="filterData.category"
                                     @input="meilisearchfilter(filterData.category, 1)">
                             </div>
                         </div>
                     </div>
                     <div class="filter-box">
-                        <button class="filter-btn" @click="filterbtn('filter2')">
+                        <button class="filter-btn" @click="filterbtn('filter3')">
                             <div class="filter-btn-left">
                                 <span class="mini-text">Color</span>
                                 <p>{{ filterData.color ? filterData.color : 'All Colors' }}</p>
@@ -42,7 +59,7 @@
                                 <font-awesome-icon :icon="['fas', 'chevron-down']" />
                             </div>
                         </button>
-                        <div class="filter-content" v-if="visibleFilters.filter2">
+                        <div class="filter-content" v-if="visibleFilters.filter3">
                             <div class="filter-search-area">
                                 <input v-model="filterData.color"
                                     @input="meilisearchfilter(filterData.color, 1)">
@@ -50,7 +67,7 @@
                         </div>
                     </div>
                     <div class="filter-box">
-                        <button class="filter-btn" @click="filterbtn('filter3')">
+                        <button class="filter-btn" @click="filterbtn('filter4')">
                             <div class="filter-btn-left">
                                 <span class="mini-text">Features</span>
                                 <p>{{ filterData.features ? filterData.features : 'All Features' }}</p>
@@ -59,7 +76,7 @@
                                 <font-awesome-icon :icon="['fas', 'chevron-down']" />
                             </div>
                         </button>
-                        <div class="filter-content" v-if="visibleFilters.filter3">
+                        <div class="filter-content" v-if="visibleFilters.filter4">
                             <div class="filter-search-area">
                                 <input v-model="filterData.features"
                                     @input="meilisearchfilter(filterData.features, 1)">
@@ -67,7 +84,7 @@
                         </div>
                     </div>
                     <div class="filter-box">
-                        <button class="filter-btn" @click="filterbtn('filter4')">
+                        <button class="filter-btn" @click="filterbtn('filter5')">
                             <div class="filter-btn-left">
                                 <span class="mini-text">Price</span>
                                 <p>
@@ -79,7 +96,7 @@
                                 <font-awesome-icon :icon="['fas', 'chevron-down']" />
                             </div>
                         </button>
-                        <div class="filter-content" v-if="visibleFilters.filter4">
+                        <div class="filter-content" v-if="visibleFilters.filter5">
                             <div class="filter-search-area">
                                 <div class="d-flex align-items-center">
                                     <input v-model="filterData.min_price" placeholder="Min"
@@ -93,7 +110,7 @@
                 </div>
                 <div class="filter-left-area">
                     <div class="filter-box">
-                        <button class="filter-btn" @click="filterbtn('filter5')">
+                        <button class="filter-btn" @click="filterbtn('filter6')">
                             <div class="filter-btn-left">
                                 <span class="mini-text">Sort</span>
                                 <p>New In</p>
@@ -102,7 +119,7 @@
                                 <font-awesome-icon :icon="['fas', 'chevron-down']" />
                             </div>
                         </button>
-                        <div class="filter-content" v-if="visibleFilters.filter5">
+                        <div class="filter-content" v-if="visibleFilters.filter6">
                             <div class="filter-search-area">
                                 <ul class="w-100">
                                     <li><button @click="meilisearchfilter('desc', currentPage)"
@@ -183,9 +200,11 @@
                     filter2: false,
                     filter3: false,
                     filter4: false,
-                    filter5: false
+                    filter5: false,
+                    filter6: false
                 },
                 filterData: {
+                    title: null,
                     category: null,
                     color: null,
                     features: null,
@@ -219,6 +238,7 @@
                         SearchProducts(
                             page: ${page_val},
                             perPage: ${this.perPage},
+                            title: "${this.filterData.title}"
                             category: "${this.filterData.category}",
                             color: "${this.filterData.color}",
                             features: "${this.filterData.features}",

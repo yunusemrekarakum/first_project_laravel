@@ -34,6 +34,9 @@
                         <li>
                             <router-link to="/admin-listele">Admin</router-link>
                         </li>
+                        <li>
+                            <router-link to="/admin/bildirim-gonder">Bildirim Gönder</router-link>
+                        </li>
                     </ul>
                 </div>
                 <div class="admin-account">

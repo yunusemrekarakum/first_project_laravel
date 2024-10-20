@@ -10,6 +10,22 @@
                 <div class="user-account">
                     <ul>
                         <li>
+                            <span>
+                                Bildirimler
+                            </span>
+                            <ul class="notification">
+                                <li
+                                    v-for="notifications_val in notifications"
+                                    :key="notifications_val.id"
+                                >
+                                    {{
+                                        JSON.parse(notifications_val.data)
+                                            .amount
+                                    }}
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
                             <button class="basket-btn">
                                 <font-awesome-icon
                                     :icon="['fas', 'bag-shopping']"
@@ -79,6 +95,7 @@ export default {
     name: "HeaderComponent",
     setup() {
         const user_info = ref(null);
+        const notifications = ref([]);
         const logout = () => {
             localStorage.removeItem("session");
             router.push({
@@ -87,17 +104,26 @@ export default {
         };
         const UserInfoGet = async () => {
             if (JSON.parse(localStorage.getItem("session")) != null) {
-                var token = JSON.parse(localStorage.getItem("session")).token
+                var token = JSON.parse(localStorage.getItem("session")).token;
             } else {
                 return;
             }
-            
+
             const userquery = `
                 query {
                     user {
                         name
                         email
                         profile_image
+                    }
+                    usernotification{
+                        id
+                        type
+                        notifiable_type
+                        notifiable_id
+                        data
+                        read_at
+                        created_at
                     }
                 }`;
             const response = await axios.post(
@@ -115,6 +141,7 @@ export default {
 
             if (!response.data.data.errors) {
                 user_info.value = response.data.data.user;
+                notifications.value = response.data.data.usernotification;
             }
         };
         onMounted(() => {
@@ -124,6 +151,7 @@ export default {
             logout,
             UserInfoGet,
             user_info,
+            notifications
         };
     },
 };

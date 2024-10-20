@@ -30,6 +30,11 @@ class SearchProducts
             'limit' => $perPage,
             'offset' => $offset,
         ];
+        if (isset($args['title']) && !empty($args['title']) && $args['title'] != 'null') {
+            $title = $args['title'];
+        } else {
+            $title = '*';
+        }
 
         if (isset($args['category']) && !empty($args['category']) && $args['category'] != 'null') {
             $category = $args['category'];
@@ -62,7 +67,7 @@ class SearchProducts
             $sort = implode(',', $options['sort']);
         }
         if (empty($options['filter'])) {
-            $key = 'products:sort:' . $sort . 'paginate:' . $page;
+            $key = 'products:title' . $title . ':sort' . $sort  . ':paginate:' . $page;
             if (Redis::exists($key)) {
                 $cachedData = json_decode(Redis::get($key), true);
                 return [
@@ -75,7 +80,7 @@ class SearchProducts
                 if (!empty($options['filter'])) {
                     $options['filter'] = implode(' AND ', $options['filter']);
                 }
-                $products = $index->search('*', $options);
+                $products = $index->search($title, $options);
                 $total = $products->getRaw()['nbHits'];
                 $cachedData = [
                     'results' => $products->getHits(),
@@ -93,7 +98,7 @@ class SearchProducts
             }
         } else {
             $filters = $options['filter'];
-            $cacheKey = 'products:filter:' . implode('_', $filters) . ':sort:' . $sort . ':page:' . $page;
+            $cacheKey = 'products:title' . $title . ':filter' . implode('_', $filters) . ':sort' . $sort . ':page' . $page;
             if (Redis::exists($cacheKey)) {
                 $cachedData = json_decode(Redis::get($cacheKey), true);
                 return [
@@ -106,7 +111,7 @@ class SearchProducts
                 if (!empty($options['filter'])) {
                     $options['filter'] = implode(' AND ', $options['filter']);
                 }
-                $products = $index->search('*', $options);
+                $products = $index->search($title, $options);
                 $total = $products->getRaw()['nbHits'];
                 $cachedData = [
                     'results' => $products->getHits(),

@@ -20,6 +20,7 @@ type Query {
     EditListProduct(id: ID!): Product
         @field(resolver: "App\\GraphQL\\Mutations\\Product@product_list_edit")
     SearchProducts(
+        title: String
         category: String
         color: String
         features: String
@@ -48,6 +49,22 @@ type Query {
         @field(
             resolver: "App\\GraphQL\\Resolvers\\AdminResolver@user_permissions"
         )
+    getAllUser: [User]
+        @field(resolver: "App\\GraphQL\\Resolvers\\AdminResolver@getAllUser")
+    usernotification: [notification]
+        @field(
+            resolver: "App\\GraphQL\\Resolvers\\AdminResolver@user_get_notification"
+        )
+}
+type notification {
+    id: ID!
+    type: String
+    notifiable_type: String
+    notifiable_id: ID
+    data: String
+    read_at: String
+    created_at: String
+    updated_at: String
 }
 type ToggleAdminAuthorityResponse {
     success: Boolean!
@@ -135,6 +152,10 @@ type Mutation {
     permission_add(user_id: Int, permission_id: Int): User
         @field(
             resolver: "App\\GraphQL\\Resolvers\\AdminResolver@permission_add"
+        )
+    notification_send(notification: String, user_id: Int): Boolean
+        @field(
+            resolver: "App\\GraphQL\\Resolvers\\AdminResolver@notification_send"
         )
 }
 type Product_Pagination {

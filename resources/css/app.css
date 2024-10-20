@@ -551,3 +551,16 @@ ul.admin-account-other-link li button {
     border: transparent;
     box-shadow: transparent;
 }
+ul.notification {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    background-color: #fff;
+    padding: 6px 20px !important;
+    max-width: 200px;
+    min-width: 100%;
+    display: none;
+}
+.user-account ul li:hover .notification {
+    display: block;
+}

@@ -34,6 +34,7 @@ import CategoryAdd from "./components/admin/category/AddComponent.vue";
 import CategoryList from "./components/admin/category/ListComponent.vue";
 import CategoryEdit from "./components/admin/category/EditComponent.vue";
 import AdminList from "./components/admin/admin_create/List.vue";
+import NotificationsSend from './components/admin/NotificationsSend.vue';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 import router from "./router/index.js";
@@ -99,6 +100,7 @@ app.component('category-add', CategoryAdd);
 app.component('category-list', CategoryList);
 app.component('category-edit', CategoryEdit);
 app.component('admin-list', AdminList);
+app.component('notifications-send', NotificationsSend);
 
 app.component('Form', Form);
 app.component('Field', Field);

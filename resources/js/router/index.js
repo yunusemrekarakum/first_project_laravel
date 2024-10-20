@@ -98,6 +98,14 @@ const AdminList = {
         </div>
     `,
 };
+const NotificationsSend = {
+    template: `
+        <div>
+            <header-admin></header-admin>
+            <notifications-send></notifications-send>
+        </div>
+    `,
+};
 const routes = [
     {
         path: "/",
@@ -230,6 +238,16 @@ const routes = [
             requiresAuth: true,
             role: ["Admin", "Super Admin"],
             requiresPermission: "Admins",
+        },
+    },
+    {
+        path: "/admin/bildirim-gonder",
+        name: "Notifications",
+        component: NotificationsSend,
+        meta: {
+            requiresAuth: true,
+            role: ["Admin", "Super Admin"],
+            requiresPermission: "Notifications",
         },
     },
 ];
